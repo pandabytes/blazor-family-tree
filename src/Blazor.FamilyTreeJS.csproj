@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazor.Core" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.11" />
@@ -45,7 +46,7 @@
     <NodePath>$(NuGetPackageFolders)node.js.redist\17.2.0\tools\linux-x64</NodePath>
   </PropertyGroup>
 
-  <Target Name="SetPath" BeforeTargets="BeforeBuild" Condition="$([MSBuild]::IsOSPlatform('macOS'))">
+  <Target Name="SetPathOnMacOS" BeforeTargets="BeforeBuild" Condition="$([MSBuild]::IsOSPlatform('macOS'))">
     <PropertyGroup>
       <!-- For M1 mac -->
       <NodePath>$(NuGetPackageFolders)node.js.redist\17.2.0\tools\osx-arm64</NodePath>
