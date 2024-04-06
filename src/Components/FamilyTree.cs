@@ -1,70 +1,61 @@
-// using Blazor.FamilyTreeJS.Interop;
-// using Microsoft.Extensions.DependencyInjection;
+namespace Blazor.FamilyTreeJS.Components;
 
-// namespace Blazor.FamilyTreeJS.Components;
+public partial class FamilyTree : BaseScopeComponent
+{
+  private bool _finishedInitiazling = false;
 
-// public partial class FamilyTree : OwningComponentBase, IAsyncDisposable
-// {
-//   /// <summary>
-//   /// Wil be injected via DI scope.
-//   /// </summary>
-//   private FamilyTreeJsInterop _familyTreeJsInterop { get; set; } = default!;
+  /// <summary>
+  /// Wil be injected via DI scope.
+  /// </summary>
+  [InjectScope]
+  private FamilyTreeInteropJsModule _familyTreeJsInterop = null!;
 
-//   /// <summary>
-//   /// Options to configure and/or initialize the family tree.
-//   /// </summary>
-//   [Parameter, EditorRequired]
-//   public FamilyTreeOptions Options { get; init; } = default!;
+  /// <summary>
+  /// Options to configure and/or initialize the family tree.
+  /// </summary>
+  [Parameter, EditorRequired]
+  public FamilyTreeOptions Options { get; init; } = null!;
 
-//   /// <summary>
-//   /// Event that gets fired when a node is added, updated, and/or removed.
-//   /// </summary>
-//   [Parameter]
-//   public EventCallback<UpdateNodeArgs> OnUpdatedNode { get; init; }
+  /// <summary>
+  /// Event that gets fired when a node is added, updated, and/or removed.
+  /// </summary>
+  [Parameter]
+  public EventCallback<UpdateNodeArgs> OnUpdatedNode { get; init; }
 
-//   /// <summary>
-//   /// Event that gets fired when a user uploads a person's photo.
-//   /// The return string indicates the url to where the image is uploaded to.
-//   /// Return empty string to indicate upload fails.
-//   /// 
-//   /// Since this is a delegate instead of <see cref="EventCallback"/>,
-//   /// <see cref="ComponentBase.StateHasChanged"/> will not be automatically
-//   /// called. You would need to call this yourself in your delegate.
-//   /// </summary>
-//   [Parameter]
-//   public Func<PhotoUploadArgs, Task<string>>? OnPhotoUpload { get; init; }
+  /// <summary>
+  /// Event that gets fired when a user uploads a person's photo.
+  /// The return string indicates the url to where the image is uploaded to.
+  /// Return empty string to indicate upload fails.
+  /// 
+  /// Since this is a delegate instead of <see cref="EventCallback"/>,
+  /// <see cref="ComponentBase.StateHasChanged"/> will not be automatically
+  /// called. You would need to call this yourself in your delegate.
+  /// </summary>
+  [Parameter]
+  public Func<PhotoUploadArgs, Task<string>>? OnPhotoUpload { get; init; }
 
-//   /// <summary>
-//   /// Event that gets fired when a user first creates a new node
-//   /// on an empty family tree. The return node will be used as
-//   /// a "default" node when this operation happens.
-//   /// 
-//   /// Since this is a delegate instead of <see cref="EventCallback"/>,
-//   /// <see cref="ComponentBase.StateHasChanged"/> will not be automatically
-//   /// called. You would need to call this yourself in your delegate.
-//   /// </summary>
-//   [Parameter]
-//   public Func<Node>? OnDefaultFirstNode { get; init; }
+  /// <summary>
+  /// Event that gets fired when a user first creates a new node
+  /// on an empty family tree. The return node will be used as
+  /// a "default" node when this operation happens.
+  /// 
+  /// Since this is a delegate instead of <see cref="EventCallback"/>,
+  /// <see cref="ComponentBase.StateHasChanged"/> will not be automatically
+  /// called. You would need to call this yourself in your delegate.
+  /// </summary>
+  [Parameter]
+  public Func<Node>? OnDefaultFirstNode { get; init; }
 
-//   [Parameter]
-//   public Guid TreeId { get; set; } = Guid.Empty;
+  [Parameter]
+  public Guid TreeId { get; set; } = Guid.Empty;
 
-//   [Parameter]
-//   public string Style { get; set; } = "width: 100%; height: 100%;";
+  [Parameter]
+  public string Style { get; set; } = "width: 100%; height: 100%;";
 
-//   /// <summary>
-//   /// Have to prefix with "tree" to satisfy selector format.
-//   /// </summary>
-//   protected string TreeIdForInterop => $"tree-{TreeId}";
-
-//   public async ValueTask DisposeAsync()
-//   {
-//     await _familyTreeJsInterop.DestroyTreeAsync(TreeIdForInterop);
-
-//     // Have to call dispose this way so that
-//     // we can also dispose scoped services
-//     ((IDisposable)this).Dispose();
-//   }
+  /// <summary>
+  /// Have to prefix with "tree" to satisfy selector format.
+  /// </summary>
+  protected string TreeIdForInterop => $"tree-{TreeId}";
 
 //   public async Task LoadNodesAsync(IEnumerable<Node> nodes)
 //     => await _familyTreeJsInterop.LoadNodesAsync(TreeIdForInterop, nodes);
@@ -85,25 +76,14 @@
 //     StateHasChanged();
 //   }
 
-//   protected override void OnInitialized()
-//   {
-//     _familyTreeJsInterop = ScopedServices.GetRequiredService<FamilyTreeJsInterop>();
-//     base.OnInitialized();
-//   }
-
-//   protected override async Task OnAfterRenderAsync(bool firstRender)
-//   {
-//     if (firstRender)
-//     {
-//       await SetupFamilyTreeAsync();
-
-//       // Store the callback interops in the options object
-//       // so that we can manage when to dispose them, so
-//       // that client doesn't need to manually dispose
-//       // these callback interops
-//       _familyTreeJsInterop.AddCallbackInterops(Options);
-//     }
-//   }
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender)
+    {
+      await _familyTreeJsInterop.ImportAsync();
+      await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop);
+    }
+  }
 
 //   private async Task SetupFamilyTreeAsync()
 //   {
@@ -120,4 +100,4 @@
 //       await _familyTreeJsInterop.RegisterDefaultFirstNodeHandlerAsync(TreeIdForInterop, OnDefaultFirstNode);
 //     }
 //   }
-// }
+}

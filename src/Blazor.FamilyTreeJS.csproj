@@ -79,14 +79,4 @@
     <Exec WorkingDirectory="$(ProjectRoot)"
           Command="npm run rollup-build" />
   </Target>
-
-  <Target Name="CopyFamilyTreeJs" AfterTargets="RunNpmBuild">
-      <ItemGroup>
-        <FamilyTreeJs Include="$(ProjectRoot)\Components\Interop\FamilyTree.js"/>
-      </ItemGroup>
-
-      <Copy SourceFiles="@(FamilyTreeJs)"
-            DestinationFolder="$(ProjectRoot)\wwwroot\js\Components\Interop" />
-  </Target>
-
 </Project>

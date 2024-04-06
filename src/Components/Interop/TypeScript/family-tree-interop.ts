@@ -1,7 +1,7 @@
-/// <reference path="Types/FamilyTree.d.ts" />
-
 import { InvalidArgumentError } from './errors';
 import { PhotoUploadArgs, UpdateNodeArgs } from './event-args';
+// import * as FamilyTreeNamespace from '@balkangraph/familytree.js';
+import FamilyTree from '@balkangraph/familytree.js';
 
 // See https://learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/call-dotnet-from-javascript?view=aspnetcore-7.0#create-javascript-object-and-data-references-to-pass-to-net
 declare global {
@@ -18,7 +18,7 @@ class FamilyTreeJsInterop {
     if (familyTree) {
       return;
     }
-
+    console.log(options);
     familyTree = new FamilyTree(`#${treeId}`, options);
     this.FamilyTrees.set(treeId, familyTree);
   }
@@ -147,4 +147,6 @@ class FamilyTreeJsInterop {
   }
 }
 
-window[FamilyTreeJsInterop.name] = new FamilyTreeJsInterop();
+// window['FamilyTreeJsInterop'] = new FamilyTreeJsInterop();
+
+export const FamilyTreeJsInteropObj = new FamilyTreeJsInterop();
