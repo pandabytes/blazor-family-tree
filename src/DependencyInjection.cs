@@ -3,6 +3,7 @@ using Blazor.FamilyTreeJS.Interop;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace Blazor.FamilyTreeJS;
 
@@ -22,14 +23,14 @@ public static class DependencyInjection
   /// Configure the <see cref="IJSRuntime"/>'s JSON options
   /// to not serialize "null" values. This will affect globally.
   /// </summary>
-  public static IServiceProvider ConfigureIJSRuntimeJsonOptions(this IServiceProvider services)
+  public static WebAssemblyHost ConfigureIJSRuntimeJsonOptions(this WebAssemblyHost webHost)
   {
-    var jsRuntime = services.GetRequiredService<IJSRuntime>();
+    var jsRuntime = webHost.Services.GetRequiredService<IJSRuntime>();
     var options = GetJsonSerializerOptions(jsRuntime);
 
     options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     options.TypeInfoResolver = new PolymorphicTypeResolver();
-    return services;
+    return webHost;
   }
 
   /// <summary>
@@ -43,9 +44,9 @@ public static class DependencyInjection
   /// Thrown when <paramref name="types"/> do not derive
   /// from <see cref="NodeMenu"/>.
   /// </exception>
-  public static IServiceProvider UseNodeMenuDerivedTypes(this IServiceProvider services, params Type[] types)
+  public static WebAssemblyHost UseNodeMenuDerivedTypes(this WebAssemblyHost webHost, params Type[] types)
   {
-    var jsRuntime = services.GetRequiredService<IJSRuntime>();
+    var jsRuntime = webHost.Services.GetRequiredService<IJSRuntime>();
     var options = GetJsonSerializerOptions(jsRuntime);
     if (options.TypeInfoResolver is not PolymorphicTypeResolver polymorhphicResolver)
     {
@@ -54,7 +55,7 @@ public static class DependencyInjection
     }
 
     polymorhphicResolver.AddDerivedNodeMenuTypes(types);
-    return services;
+    return webHost;
   }
 
   /// <summary>
