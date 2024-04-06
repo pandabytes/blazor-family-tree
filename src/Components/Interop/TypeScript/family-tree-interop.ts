@@ -1,15 +1,12 @@
-/// <reference path="types/FamilyTree.d.ts" />
+/// <reference path="Types/FamilyTree.d.ts" />
 
-import { CallbackInterop } from './dotnet';
 import { InvalidArgumentError } from './errors';
 import { PhotoUploadArgs, UpdateNodeArgs } from './event-args';
-import { FamilyTreeStaticInterop } from './family-tree-static';
 
 // See https://learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/call-dotnet-from-javascript?view=aspnetcore-7.0#create-javascript-object-and-data-references-to-pass-to-net
 declare global {
   const DotNet: {
     createJSStreamReference(stream: ArrayBuffer | Blob): Promise<any>;
-    attachReviver(callBack: (key: string, value: any) => Function | any): void;
   }
 }
 
@@ -151,33 +148,3 @@ class FamilyTreeJsInterop {
 }
 
 window[FamilyTreeJsInterop.name] = new FamilyTreeJsInterop();
-window[FamilyTreeStaticInterop.name] = new FamilyTreeStaticInterop();
-
-// Taken from https://remibou.github.io/How-to-send-callback-to-JS-Interop-in-Blazor/
-DotNet.attachReviver((key, value) => {
-  function isCallbackInterop(obj: any): obj is CallbackInterop {
-    const isObjecType = obj && typeof obj === 'object';
-    if (!isObjecType) {
-      return false;
-    }
-
-    return obj.hasOwnProperty('isCallbackInterop') && obj.hasOwnProperty('dotNetRef');
-  }
-
-  if (isCallbackInterop(value)) {
-    const dotNetRef = value.dotNetRef;
-
-    if (value.isAsync) {
-      // This callback will return a Promise
-      return function() {
-        return dotNetRef.invokeMethodAsync('Invoke', ...arguments);
-      };
-    }
-
-    return function() {
-      return dotNetRef.invokeMethod('Invoke', ...arguments);
-    }
-  }
-
-  return value;
-});

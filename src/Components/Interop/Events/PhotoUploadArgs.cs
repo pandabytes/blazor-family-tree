@@ -1,4 +1,4 @@
-namespace Blazor.FamilyTreeJS.Interop.Events;
+namespace Blazor.FamilyTreeJS.Components.Interop.Events;
 
 /// <summary>
 /// Contain data when a person's photo is uploaded.

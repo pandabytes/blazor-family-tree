@@ -56,13 +56,37 @@
     <SetEnvironmentVariableTask Name="PATH" Value="$(UpdatePath)" />
   </Target>
 
-  <!-- https://www.typescriptlang.org/docs/handbook/compiler-options-in-msbuild.html -->
+  <!-- Run "npm install" when package.json has not changed.
+       This prevents npm install to run every time dotnet build is run.
+       Taken from: https://www.meziantou.net/running-npm-tasks-when-building-a-dotnet-project.htm
+  -->
   <PropertyGroup>
-    <TypeScriptOutFile>wwwroot\family-tree-interop.js</TypeScriptOutFile>
-    <TypeScriptTarget>ES2018</TypeScriptTarget>
-    <TypeScriptAlwaysStrict>true</TypeScriptAlwaysStrict>
-    <TypeScriptModuleKind>amd</TypeScriptModuleKind>
-    <TypeScriptInclude>Interop\TypeScript\*.ts</TypeScriptInclude>
+    <ProjectRoot>$(MSBuildProjectDirectory)</ProjectRoot>
+    <NpmInstallStampFile>$(ProjectRoot)/node_modules/.install-stamp</NpmInstallStampFile>
   </PropertyGroup>
+
+  <Target Name="RemoveWwwRootBeforeBuild" BeforeTargets="BeforeBuild">
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/wwwroot/"/>
+  </Target>
+
+  <Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="$(ProjectRoot)/package.json" Outputs="$(NpmInstallStampFile)">
+    <Exec WorkingDirectory="$(NpmRoot)"
+          Command="npm install" />
+    <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
+  </Target>
+
+  <Target Name="RunNpmBuild" AfterTargets="PostBuildEvent">
+    <Exec WorkingDirectory="$(ProjectRoot)"
+          Command="npm run rollup-build" />
+  </Target>
+
+  <Target Name="CopyFamilyTreeJs" AfterTargets="RunNpmBuild">
+      <ItemGroup>
+        <FamilyTreeJs Include="$(ProjectRoot)\Components\Interop\FamilyTree.js"/>
+      </ItemGroup>
+
+      <Copy SourceFiles="@(FamilyTreeJs)"
+            DestinationFolder="$(ProjectRoot)\wwwroot\js\Components\Interop" />
+  </Target>
 
 </Project>

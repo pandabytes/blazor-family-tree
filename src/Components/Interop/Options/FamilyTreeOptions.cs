@@ -1,4 +1,4 @@
-namespace Blazor.FamilyTreeJS.Interop.Options;
+namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 
 public record FamilyTreeOptions(
   string Mode = "light",

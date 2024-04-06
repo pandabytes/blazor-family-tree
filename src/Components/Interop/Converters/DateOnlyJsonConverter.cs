@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Blazor.FamilyTreeJS.Interop.Converters;
+namespace Blazor.FamilyTreeJS.Components.Interop.Converters;
 
 public sealed class DateOnlyJsonConverter : JsonConverter<DateOnly?>
 {

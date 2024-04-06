@@ -1,0 +1,16 @@
+{
+  "name": "blazor-familytree",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "rollup-build": "rollup --config"
+  },
+  "author": "pandabytes",
+  "license": "MIT",
+  "devDependencies": {
+    "rollup": "^4.14.0",
+    "rollup-plugin-multi-input": "^1.4.1",
+    "@rollup/plugin-terser": "^0.4.4"
+  }
+}

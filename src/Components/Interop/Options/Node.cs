@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Blazor.FamilyTreeJS.Interop.Converters;
 
-namespace Blazor.FamilyTreeJS.Interop.Options;
+namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 
 public record Node
 {

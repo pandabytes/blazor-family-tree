@@ -1,4 +1,4 @@
-namespace Blazor.FamilyTreeJS.Interop.Events;
+namespace Blazor.FamilyTreeJS.Components.Interop.Events;
 
 /// <summary>
 /// Contain data when the update node event is triggered.

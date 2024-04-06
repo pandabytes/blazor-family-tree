@@ -10,10 +10,10 @@ public static class DependencyInjection
 {
   public static IServiceCollection AddBlazorFamilyJS(this IServiceCollection services)
   {
-    return services
-      .AddScoped<FamilyTreeJsInterop>()
-      .AddTransient<ObjectTraversal>()
-      .AddTransient<FamilyTreeJsStaticInterop>();
+    return services;
+      // .AddScoped<FamilyTreeJsInterop>()
+      // .AddTransient<ObjectTraversal>()
+      // .AddTransient<FamilyTreeJsStaticInterop>();
   }
 
   public static IServiceProvider ConfigureIJSRuntimeJsonOptions(this IServiceProvider services)
