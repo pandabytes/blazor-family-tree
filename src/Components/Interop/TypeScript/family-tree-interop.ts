@@ -59,7 +59,6 @@ class FamilyTreeJsInterop {
 
   public registerUpdateNodeHandler(treeId: string, updateNodeHandler: (args: UpdateNodeArgs) => void) {
     const familyTree = this.getFamilyTree(treeId);
-
     familyTree.onUpdateNode(updateNodeHandler);
   }
 
@@ -69,7 +68,7 @@ class FamilyTreeJsInterop {
     // https://www.reddit.com/r/learnjavascript/comments/fixrf1/why_is_this_lost_when_a_method_is_used_as_a/
     const familyTreeInterop = this;
 
-    familyTree.editUI.on("element-btn-click", (sender, args) => {     
+    familyTree.editUI.on("element-btn-click", (_sender, _args) => {     
       FamilyTree.fileUploadDialog(function (file: File) {
         familyTreeInterop.uploadPhotoAsync(familyTree, file, photoUploadHandler);
       })

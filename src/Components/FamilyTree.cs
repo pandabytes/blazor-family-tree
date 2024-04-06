@@ -1,12 +1,18 @@
 namespace Blazor.FamilyTreeJS.Components;
 
-public partial class FamilyTree : BaseScopeComponent
+/// <summary>
+/// FamilyTreeJS component.
+/// </summary>
+public sealed partial class FamilyTree : BaseScopeComponent
 {
+  [InjectScope, AutoImportJsModule]
+  private readonly FamilyTreeInteropJsModule _familyTreeJsInterop = null!;
+
   /// <summary>
-  /// Wil be injected via DI scope.
+  /// Specify the id of the tree.
   /// </summary>
-  [InjectScope]
-  private FamilyTreeInteropJsModule _familyTreeJsInterop = null!;
+  [Parameter, EditorRequired]
+  public string TreeId { get; set; } = string.Empty;
 
   /// <summary>
   /// Options to configure and/or initialize the family tree.
@@ -44,58 +50,77 @@ public partial class FamilyTree : BaseScopeComponent
   [Parameter]
   public Func<Node>? OnDefaultFirstNode { get; init; }
 
-  [Parameter, EditorRequired]
-  public string TreeId { get; set; } = string.Empty;
-
+  /// <summary>
+  /// Custom style for the family tree.
+  /// </summary>
   [Parameter]
   public string Style { get; set; } = "width: 100%; height: 100%;";
 
   /// <summary>
   /// Have to prefix with "tree" to satisfy selector format.
   /// </summary>
-  protected string TreeIdForInterop => $"tree-{TreeId}";
+  private string TreeIdForInterop => $"tree-{TreeId}";
 
-//   public async Task LoadNodesAsync(IEnumerable<Node> nodes)
-//     => await _familyTreeJsInterop.LoadNodesAsync(TreeIdForInterop, nodes);
+  /// <summary>
+  /// Load nodes to the family tree. This is useful
+  /// when you don't have nodes to load during the
+  /// family tree initialization and want to load
+  /// the nodes at a later time.
+  /// </summary>
+  /// <param name="nodes">Nodes to be loaded.</param>
+  public async Task LoadNodesAsync(IEnumerable<Node> nodes)
+    => await _familyTreeJsInterop.LoadNodesAsync(TreeIdForInterop, nodes);
 
-//   public async Task ReplaceNodeIdsAsync(IDictionary<string, string> old_new_id_mappings)
-//     => await _familyTreeJsInterop.ReplaceNodeIdsAsync(TreeIdForInterop, old_new_id_mappings);
+  /// <summary>
+  /// Replace all references of an old node id with new node id.
+  /// <paramref name="oldNewIdMappings"/> is a dictionary
+  /// where key is the old id and value is the new id.
+  /// </summary>
+  /// <param name="oldNewIdMappings">Old id is key, new id is value.</param>
+  public async Task ReplaceNodeIdsAsync(IDictionary<string, string> oldNewIdMappings)
+    => await _familyTreeJsInterop.ReplaceNodeIdsAsync(TreeIdForInterop, oldNewIdMappings);
 
-//   public async Task<bool> RemoveNodeAsync(string nodeId)
-//     => await _familyTreeJsInterop.RemoveNodeAsync(TreeIdForInterop, nodeId);
+  /// <summary>
+  /// Remove a node from the family tree.
+  /// </summary>
+  /// <param name="nodeId">Id of the node to be removed.</param>
+  /// <returns>True if node was removed, false otherwise.</returns>
+  public async Task<bool> RemoveNodeAsync(string nodeId)
+    => await _familyTreeJsInterop.RemoveNodeAsync(TreeIdForInterop, nodeId);
 
-//   /// <summary>
-//   /// Reset the the family tree to a clean state, i.e. its initial state.
-//   /// </summary>
-//   public async Task ResetAsync()
-//   {
-//     await _familyTreeJsInterop.DestroyTreeAsync(TreeIdForInterop);
-//     await SetupFamilyTreeAsync();
-//     StateHasChanged();
-//   }
+  /// <summary>
+  /// Reset the the family tree to a clean state, i.e. to its initial state.
+  /// </summary>
+  public async Task ResetAsync()
+  {
+    await _familyTreeJsInterop.DestroyTreeAsync(TreeIdForInterop);
+    await SetupFamilyTreeAsync();
+    StateHasChanged();
+  }
 
+  /// <inheritdoc />
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
+    await base.OnAfterRenderAsync(firstRender);
     if (firstRender)
     {
-      await _familyTreeJsInterop.ImportAsync();
-      await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, Options);
+      await SetupFamilyTreeAsync();
     }
   }
 
-//   private async Task SetupFamilyTreeAsync()
-//   {
-//     await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, Options);
-//     await _familyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
+  private async Task SetupFamilyTreeAsync()
+  {
+    await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, Options);
+    await _familyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
 
-//     if (OnPhotoUpload is not null)
-//     {
-//       await _familyTreeJsInterop.RegisterOnPhotoUploadCallbackAsync(TreeIdForInterop, OnPhotoUpload);
-//     }
+    if (OnPhotoUpload is not null)
+    {
+      await _familyTreeJsInterop.RegisterOnPhotoUploadCallbackAsync(TreeIdForInterop, OnPhotoUpload);
+    }
 
-//     if (OnDefaultFirstNode is not null)
-//     {
-//       await _familyTreeJsInterop.RegisterDefaultFirstNodeHandlerAsync(TreeIdForInterop, OnDefaultFirstNode);
-//     }
-//   }
+    if (OnDefaultFirstNode is not null)
+    {
+      await _familyTreeJsInterop.RegisterDefaultFirstNodeHandlerAsync(TreeIdForInterop, OnDefaultFirstNode);
+    }
+  }
 }

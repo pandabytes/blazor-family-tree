@@ -1,10 +1,12 @@
 namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 
 /// <summary>
-/// 
+/// Represent a node menu with
+/// an event handler to handle
+/// when this node menu is clicked on.
 /// </summary>
-/// <param name="Text"></param>
-/// <param name="Icon"></param>
+/// <param name="Text">Text of the node menu.</param>
+/// <param name="Icon">Icon of the node menu</param>
 /// <param name="OnClick">
 /// First argument is the node id.
 /// Second argument is unused, hence it's always null.

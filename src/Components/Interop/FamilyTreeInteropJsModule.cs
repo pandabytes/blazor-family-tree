@@ -6,7 +6,8 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
 
   private readonly ObjectTraversal _objectTraversal;
 
-  protected override string ModulePath => $"{ModulePrefixPath}/js/{nameof(Components)}/{nameof(Interop)}/TypeScript/family-tree-interop.js";
+  protected override string ModulePath
+    => $"{ModulePrefixPath}/js/{nameof(Components)}/{nameof(Interop)}/TypeScript/family-tree-interop.js";
 
   public FamilyTreeInteropJsModule(ObjectTraversal objectTraversal, IJSRuntime jSRuntime)
     : base(jSRuntime)

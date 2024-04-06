@@ -8,6 +8,9 @@ namespace Blazor.FamilyTreeJS;
 
 public static class DependencyInjection
 {
+  /// <summary>
+  /// Register FamilyTreeJS dependencies.
+  /// </summary>
   public static IServiceCollection AddBlazorFamilyJS(this IServiceCollection services)
   {
     return services
@@ -15,6 +18,10 @@ public static class DependencyInjection
       .AddTransient<ObjectTraversal>();
   }
 
+  /// <summary>
+  /// Configure the <see cref="IJSRuntime"/>'s JSON options
+  /// to not serialize "null" values. This will affect globally.
+  /// </summary>
   public static IServiceProvider ConfigureIJSRuntimeJsonOptions(this IServiceProvider services)
   {
     var jsRuntime = services.GetRequiredService<IJSRuntime>();
@@ -25,6 +32,17 @@ public static class DependencyInjection
     return services;
   }
 
+  /// <summary>
+  /// Register classes that derive from <see cref="NodeMenu"/>
+  /// into the JSON serialization/deserialization process. This
+  /// enables the derived classes to be serialized/deserialized
+  /// correctly with their custom properties.
+  /// </summary>
+  /// <param name="types">Types that derive from <see cref="NodeMenu"/></param>
+  /// <exception cref="InvalidOperationException">
+  /// Thrown when <paramref name="types"/> do not derive
+  /// from <see cref="NodeMenu"/>.
+  /// </exception>
   public static IServiceProvider UseNodeMenuDerivedTypes(this IServiceProvider services, params Type[] types)
   {
     var jsRuntime = services.GetRequiredService<IJSRuntime>();

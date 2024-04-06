@@ -4,9 +4,8 @@ using System.Reflection;
 namespace Blazor.FamilyTreeJS.Components;
 
 /// <summary>
-/// Purpose of this class is to ways
-/// to traverse an object
-/// hierarchy.
+/// Purpose of this class is to
+/// traverse an object hierarchy.
 /// </summary>
 internal class ObjectTraversal
 {

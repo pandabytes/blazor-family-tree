@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Blazor.FamilyTreeJS.Components.Interop.Converters;
 
-public sealed class DateOnlyJsonConverter : JsonConverter<DateOnly?>
+internal sealed class DateOnlyJsonConverter : JsonConverter<DateOnly?>
 {
   public override DateOnly? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
   {

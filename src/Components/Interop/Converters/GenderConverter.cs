@@ -5,23 +5,27 @@ namespace Blazor.FamilyTreeJS.Interop.Converters;
 
 internal sealed class GenderConverter : JsonConverter<Gender>
 {
+  private const string Male = "male";
+
+  private const string Female = "female";
+
   public override Gender Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
   {
     var genderStr = reader.GetString();
-    if (genderStr != GenderString.Male && genderStr != GenderString.Female)
+    if (genderStr != Male && genderStr != Female)
     {
-      throw new NotSupportedException($"Gender must be either \"{GenderString.Male}\" or \"{GenderString.Female}\".");
+      throw new NotSupportedException($"Gender must be either \"{Male}\" or \"{Female}\".");
     }
     
-    return genderStr == GenderString.Male ? Gender.Male : Gender.Female;
+    return genderStr == Male ? Gender.Male : Gender.Female;
   }
 
   public override void Write(Utf8JsonWriter writer, Gender value, JsonSerializerOptions options)
   {
     var genderStr = value switch
     {
-      Gender.Male => GenderString.Male,
-      Gender.Female => GenderString.Female,
+      Gender.Male => Male,
+      Gender.Female => Female,
       _ => throw new NotSupportedException($"Gender {value} not supported. This should never happen.")
     };
 
