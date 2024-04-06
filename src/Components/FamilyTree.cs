@@ -2,8 +2,6 @@ namespace Blazor.FamilyTreeJS.Components;
 
 public partial class FamilyTree : BaseScopeComponent
 {
-  private bool _finishedInitiazling = false;
-
   /// <summary>
   /// Wil be injected via DI scope.
   /// </summary>
@@ -46,7 +44,7 @@ public partial class FamilyTree : BaseScopeComponent
   [Parameter]
   public Func<Node>? OnDefaultFirstNode { get; init; }
 
-  [Parameter]
+  [Parameter, EditorRequired]
   public Guid TreeId { get; set; } = Guid.Empty;
 
   [Parameter]
@@ -81,7 +79,7 @@ public partial class FamilyTree : BaseScopeComponent
     if (firstRender)
     {
       await _familyTreeJsInterop.ImportAsync();
-      await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop);
+      await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, Options);
     }
   }
 

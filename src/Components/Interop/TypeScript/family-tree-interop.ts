@@ -1,6 +1,5 @@
 import { InvalidArgumentError } from './errors';
 import { PhotoUploadArgs, UpdateNodeArgs } from './event-args';
-// import * as FamilyTreeNamespace from '@balkangraph/familytree.js';
 import FamilyTree from '@balkangraph/familytree.js';
 
 // See https://learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/call-dotnet-from-javascript?view=aspnetcore-7.0#create-javascript-object-and-data-references-to-pass-to-net
@@ -18,7 +17,7 @@ class FamilyTreeJsInterop {
     if (familyTree) {
       return;
     }
-    console.log(options);
+
     familyTree = new FamilyTree(`#${treeId}`, options);
     this.FamilyTrees.set(treeId, familyTree);
   }
@@ -77,6 +76,15 @@ class FamilyTreeJsInterop {
     });
   }
 
+  public destroyTree(treeId: string): void {
+    const familyTree = this.getFamilyTree(treeId);
+
+    // Destroy will remove all registered events
+    // associated to this family tree object
+    familyTree.destroy();
+    this.FamilyTrees.delete(treeId);
+  }
+
   private async uploadPhotoAsync(
     familyTree: FamilyTree,
     file: File,
@@ -97,15 +105,6 @@ class FamilyTreeJsInterop {
       const photoInputElement = document.querySelector('input[data-binding="photo"');
       photoInputElement?.setAttribute('value', url);
     }
-  }
-
-  public destroyTree(treeId: string): void {
-    const familyTree = this.getFamilyTree(treeId);
-
-    // Destroy will remove all registered events
-    // associated to this family tree object
-    familyTree.destroy();
-    this.FamilyTrees.delete(treeId);
   }
 
   private findPhotoLabel(familyTree: FamilyTree): HTMLLabelElement | undefined {
@@ -146,7 +145,5 @@ class FamilyTreeJsInterop {
     return familyTree;
   }
 }
-
-// window['FamilyTreeJsInterop'] = new FamilyTreeJsInterop();
 
 export const FamilyTreeJsInteropObj = new FamilyTreeJsInterop();

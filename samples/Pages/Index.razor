@@ -2,4 +2,34 @@
 
 <h1>Hello, world!</h1>
 
-<FamilyTree Options="@(new() { Mode = "dark", Nodes = new List<Node>() })" />
+<FamilyTree Options="@_options" />
+
+@code
+{
+  private FamilyTreeOptions _options = null!;
+
+  protected override void OnInitialized()
+  {
+    _options = new(
+      Mode: "dark",
+      Template: "hugo",
+      NodeBinding: new Dictionary<string, string>() 
+      { 
+        { NodeBinding.Field0, "name" },
+        { NodeBinding.Img0, "photo" },
+      },
+      NodeTreeMenu: true,
+      EditForm: new EditForm(
+        ReadOnly: false,
+        PhotoBinding: "photo",
+        AddMore: string.Empty,
+        Buttons: new Dictionary<string, ButtonEdit?>()
+        {
+          { "pdf", null },
+          { "share", null},
+          { "remove", null}
+        }
+      )
+    );
+  }
+}

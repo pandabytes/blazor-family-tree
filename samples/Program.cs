@@ -11,4 +11,7 @@ builder.Services
   .AddBlazorFamilyJS()
   .AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-await builder.Build().RunAsync();
+var webHost = builder.Build();
+webHost.Services.ConfigureIJSRuntimeJsonOptions();
+
+await webHost.RunAsync();
