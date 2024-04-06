@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.FamilyTreeJS", "src\Blazor.FamilyTreeJS.csproj", "{E8CE19F2-05FF-44F9-848C-021B67BDD33A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.FamilyTreeJS.Sample", "samples\Blazor.FamillyTreeJS.Sample.csproj", "{AFCB75C3-22BD-469D-BD8C-D181E66799A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.FamilyTreeJS.Sample", "samples/Blazor.FamilyTreeJS.Sample.csproj", "{AFCB75C3-22BD-469D-BD8C-D181E66799A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -45,7 +45,7 @@ public partial class FamilyTree : BaseScopeComponent
   public Func<Node>? OnDefaultFirstNode { get; init; }
 
   [Parameter, EditorRequired]
-  public Guid TreeId { get; set; } = Guid.Empty;
+  public string TreeId { get; set; } = string.Empty;
 
   [Parameter]
   public string Style { get; set; } = "width: 100%; height: 100%;";
