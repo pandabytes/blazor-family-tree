@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Blazor.FamilyTreeJS;
 using Blazor.FamilyTreeJS.Sample;
+using Blazor.Core;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -11,7 +12,9 @@ builder.Services
   .AddBlazorFamilyJS()
   .AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-var webHost = builder.Build();
-webHost.Services.ConfigureIJSRuntimeJsonOptions();
+var webHost = builder
+  .Build()
+  .ConfigureIJSRuntimeJsonOptions();
 
+await webHost.Services.RegisterAttachReviverAsync();
 await webHost.RunAsync();
