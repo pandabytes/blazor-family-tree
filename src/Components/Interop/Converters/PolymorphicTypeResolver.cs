@@ -6,6 +6,10 @@ namespace Blazor.FamilyTreeJS.Interop;
 
 internal class PolymorphicTypeResolver : DefaultJsonTypeInfoResolver
 {
+  /// <summary>
+  /// Contain type information of classes that
+  /// derive from <see cref="NodeMenu"/>.
+  /// </summary>
   private readonly JsonPolymorphismOptions _nodeMenuJsonPolyOptions;
 
   public PolymorphicTypeResolver()
@@ -20,13 +24,10 @@ internal class PolymorphicTypeResolver : DefaultJsonTypeInfoResolver
   public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
   {
     JsonTypeInfo jsonTypeInfo = base.GetTypeInfo(type, options);
-    Type basePointType = typeof(NodeMenu);
-
-    if (jsonTypeInfo.Type == basePointType)
+    if (jsonTypeInfo.Type == typeof(NodeMenu) && _nodeMenuJsonPolyOptions.DerivedTypes.Any())
     {
       jsonTypeInfo.PolymorphismOptions = _nodeMenuJsonPolyOptions;
     }
-
     return jsonTypeInfo;
   }
 
