@@ -1,7 +1,17 @@
+// We import DotNet namespace like this just to get the type declaration
+// but we don't want to bundle it in our output .js file. Because the
+// namespace DotNet is already available in the browser when Blazor
+// loads the app
+// Idea taken from here https://stackoverflow.com/questions/74723484/how-to-get-vite-to-not-import-bundle-an-external-dependency/74723564
+import type { DotNet as NpmDotNet } from '@microsoft/dotnet-js-interop';
+
 import { InvalidArgumentError } from './errors';
 import { PhotoUploadArgs, UpdateNodeArgs } from './event-args';
-import { DotNet } from '@microsoft/dotnet-js-interop';
 import FamilyTree from '@balkangraph/familytree.js';
+
+declare global {
+  const DotNet: typeof NpmDotNet;
+}
 
 class FamilyTreeJsInterop {
   FamilyTrees = new Map<string, FamilyTree>();
