@@ -10,7 +10,7 @@ public record Node
   public required string Id { get; init; }
 
   [JsonConverter(typeof(GenderConverter))]
-  public required Gender Gender { get; init; }
+  public Gender? Gender { get; init; }
 
   public string Name
   {
@@ -38,7 +38,6 @@ public record Node
         FirstName = _name;
         MiddleName = string.Empty;
         LastName = string.Empty;
-        return;
       }
       // This means we only have first and last name, no middle name
       else if (firstIndex == lastIndex)
@@ -85,10 +84,10 @@ public record Node
 
   private static string NormalizeMiddleName(string middleName)
   {
-    var tokens = middleName.Split(" ");
+    var tokens = middleName.Split(' ');
     var normalizedTokens = tokens
-      .Select(c => c.Trim())
-      .Where(c => !string.IsNullOrWhiteSpace(c));
+      .Select(word => word.Trim())
+      .Where(word => !string.IsNullOrWhiteSpace(word));
 
     return string.Join(' ', normalizedTokens);
   }
