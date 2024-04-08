@@ -1,13 +1,7 @@
 import { InvalidArgumentError } from './errors';
 import { PhotoUploadArgs, UpdateNodeArgs } from './event-args';
+import { DotNet } from '@microsoft/dotnet-js-interop';
 import FamilyTree from '@balkangraph/familytree.js';
-
-// See https://learn.microsoft.com/en-us/aspnet/core/blazor/javascript-interoperability/call-dotnet-from-javascript?view=aspnetcore-7.0#create-javascript-object-and-data-references-to-pass-to-net
-declare global {
-  const DotNet: {
-    createJSStreamReference(stream: ArrayBuffer | Blob): Promise<any>;
-  }
-}
 
 class FamilyTreeJsInterop {
   FamilyTrees = new Map<string, FamilyTree>();

@@ -9,6 +9,7 @@
   "author": "pandabytes",
   "license": "MIT",
   "devDependencies": {
+    "@microsoft/dotnet-js-interop": "^7.0.14",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
