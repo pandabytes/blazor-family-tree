@@ -59,17 +59,7 @@ class FamilyTreeJsInterop {
 
   public registerUpdateNodeHandler(treeId: string, updateNodeHandler: (args: UpdateNodeArgs) => void) {
     const familyTree = this.getFamilyTree(treeId);
-
-    familyTree.onUpdateNode(args => {
-      // Temp workaround because of https://github.com/BALKANGraph/FamilyTreeJS/issues/104
-      for (const node of args.updateNodesData) {
-        if (Array.isArray(node['gender'])) {
-          node['gender'] = node['gender'][0];
-        }
-      }
-
-      updateNodeHandler(args);
-    });
+    familyTree.onUpdateNode(updateNodeHandler);
   }
 
   public registerPhotoUploadHandler(treeId: string, photoUploadHandler: (args: PhotoUploadArgs) => Promise<string>) {

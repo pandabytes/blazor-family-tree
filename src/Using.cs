@@ -10,3 +10,4 @@ global using Blazor.FamilyTreeJS.Components.Interop.Converters;
 global using Blazor.Core.Components;
 global using Blazor.Core.Interop;
 global using Blazor.Core.Interop.Callbacks;
+global using Blazor.FamilyTreeJS.Components.Interop.Modules.FamilyTreeInterop;

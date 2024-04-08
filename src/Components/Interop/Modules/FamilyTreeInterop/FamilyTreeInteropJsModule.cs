@@ -1,4 +1,4 @@
-namespace Blazor.FamilyTreeJS.Components.Interop;
+namespace Blazor.FamilyTreeJS.Components.Interop.Modules.FamilyTreeInterop;
 
 internal sealed class FamilyTreeInteropJsModule : BaseJsModule
 {
@@ -6,13 +6,23 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
 
   private readonly ObjectTraversal _objectTraversal;
 
-  protected override string ModulePath
-    => $"{ModulePrefixPath}/js/{nameof(Components)}/{nameof(Interop)}/TypeScript/family-tree-interop.js";
+  protected override string ModulePath { get; }
 
   public FamilyTreeInteropJsModule(ObjectTraversal objectTraversal, IJSRuntime jSRuntime)
     : base(jSRuntime)
   {
     _objectTraversal = objectTraversal;
+    var pathComponents = new string[]
+    {
+      ModulePrefixPath,
+      "js",
+      nameof(Components),
+      nameof(Interop),
+      nameof(Modules),
+      nameof(FamilyTreeInterop),
+      "family-tree-interop.js",
+    };
+    ModulePath = string.Join('/', pathComponents);
   }
 
   public async Task SetupFamilyTreeAsync(string treeId, FamilyTreeOptions? options = null)
