@@ -1,22 +1,49 @@
 ﻿@page "/"
+@using Blazor.FamilyTreeJS.Components.Interop.Events
 
-<h1>Hello, world!</h1>
-
-<FamilyTree TreeId="x" Options="@_options" />
+<FamilyTree @ref=@_familyTree
+            OnUpdatedNode=@OnUpdateNode
+            OnDefaultFirstNode=@OnDefaultFirstNode
+            TreeId="x"
+            Options=@_options />
 
 @code
 {
   private FamilyTreeOptions _options = null!;
 
+  private FamilyTree _familyTree = null!;
+
+  private void OnUpdateNode(UpdateNodeArgs args)
+  {
+    Console.WriteLine(args);
+  }
+
+  private Node OnDefaultFirstNode()
+    => new() { Id = "_", Gender = Gender.Male };
+
   protected override void OnInitialized()
   {
     _options = new(
       Mode: "dark",
-      Template: "hugo",
+      Template: Template.Hugo,
       NodeBinding: new Dictionary<string, string>() 
       { 
         { NodeBinding.Field0, "name" },
         { NodeBinding.Img0, "photo" },
+      },
+      NodeMenu: new() {
+        Add = new(Text: "Add node"),
+        Details = new(Text: "Show details"),
+        Edit = new(Text: "Edit details"),
+        Remove = new(
+          Text: "Remove node",
+          // Although Action means "void" and the lambda is async,
+          // we can just let it run without awaiting without needing
+          // to know whether the async lambda succeeds or not
+          OnClick: new ActionCallbackInterop<string, object?>(
+            async (nodeId, _) => await _familyTree.RemoveNodeAsync(nodeId)
+          )
+        )
       },
       NodeTreeMenu: true,
       EditForm: new EditForm(
@@ -26,8 +53,23 @@
         Buttons: new Dictionary<string, ButtonEdit?>()
         {
           { "pdf", null },
-          { "share", null },
-          { "remove", null }
+          { "share", null},
+          { "remove", null}
+        },
+        Elements: new List<EditFormElement>()
+        {
+          new(Type: "date", Label: "Birth Date", Binding: "birthDate"),
+          new(Type: "date", Label: "Death Date", Binding: "deathDate"),
+          new(Type: "textbox", Label: "Photo", Binding: "photo", Btn: "Upload photo"),
+          new(Type: "textbox", Label: "Full Name", Binding: "name"),
+          new(
+            Type: "select", Label: "Gender", Binding: "gender",
+            Options: new List<Dictionary<string, string>>()
+            {
+              new() { { "value", "male" }, { "text", "Male" } },
+              new() { { "value", "female" }, { "text", "Female" } }
+            }
+          )
         }
       )
     );
