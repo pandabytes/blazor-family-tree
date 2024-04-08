@@ -4,6 +4,7 @@
 <FamilyTree @ref=@_familyTree
             OnUpdatedNode=@OnUpdateNode
             OnDefaultFirstNode=@OnDefaultFirstNode
+            OnPhotoUpload=@OnPhotoUpload
             TreeId="x"
             Options=@_options />
 
@@ -20,6 +21,11 @@
 
   private Node OnDefaultFirstNode()
     => new() { Id = "_", Gender = Gender.Male };
+
+  private Task<string> OnPhotoUpload(PhotoUploadArgs args)
+  {
+    return Task.FromResult("https://cdn.dribbble.com/userupload/2558591/file/original-473e5e88a03fbc49313c1613932d58b5.png?resize=2048x1536");
+  }
 
   protected override void OnInitialized()
   {

@@ -3,7 +3,7 @@
 This is a wrapper library for [FamilyTreeJS](https://balkan.app/FamilyTreeJS)
 and it is only compatible for Blazor WASM.
 
-FamilyTreeJS version: `1.9.17`
+FamilyTreeJS version: `1.9.18`
 
 # Installation
 Install from Nuget (not available yet).

@@ -71,7 +71,7 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
     _callbackInterops.Add(callbackInterop);
 
     var functionId = $"{FamilyTreeJsInteropModule}.registerDefaultFirstNodeHandler";
-    await Module.InvokeVoidAsync(functionId, treeId, callbackInterop);    
+    await Module.InvokeVoidAsync(functionId, treeId, callbackInterop);  
   }
 
   public async Task RegisterOnPhotoUploadCallbackAsync(string treeId, Func<PhotoUploadArgs, Task<string>> handler)

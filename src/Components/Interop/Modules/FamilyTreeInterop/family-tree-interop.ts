@@ -38,8 +38,7 @@ class FamilyTreeJsInterop {
   }
 
   public replaceNodeIds(treeId: string, oldNewIdMappings: { [key: string]: string | number }) {
-    const familyTree = this.getFamilyTree(treeId);
-    familyTree.replaceIds(oldNewIdMappings);
+    this.getFamilyTree(treeId).replaceIds(oldNewIdMappings);
   }
 
   public registerDefaultFirstNodeHandler(treeId: string, handler: () => Object) {
@@ -65,12 +64,9 @@ class FamilyTreeJsInterop {
   public registerPhotoUploadHandler(treeId: string, photoUploadHandler: (args: PhotoUploadArgs) => Promise<string>) {
     const familyTree = this.getFamilyTree(treeId);
 
-    // https://www.reddit.com/r/learnjavascript/comments/fixrf1/why_is_this_lost_when_a_method_is_used_as_a/
-    const familyTreeInterop = this;
-
     familyTree.editUI.on("element-btn-click", (_sender, _args) => {     
       FamilyTree.fileUploadDialog(function (file: File) {
-        familyTreeInterop.uploadPhotoAsync(familyTree, file, photoUploadHandler);
+        FamilyTreeJsInterop.uploadPhotoAsync(familyTree, file, photoUploadHandler);
       })
     });
   }
@@ -84,7 +80,7 @@ class FamilyTreeJsInterop {
     this.FamilyTrees.delete(treeId);
   }
 
-  private async uploadPhotoAsync(
+  private static async uploadPhotoAsync(
     familyTree: FamilyTree,
     file: File,
     photoUploadFunc: (args: PhotoUploadArgs) => Promise<string>
@@ -98,7 +94,7 @@ class FamilyTreeJsInterop {
     // Falsy value indicates handler did not do upload successfully
     if (url) {
       // Once we get back an URL, we then set it in the photo textbox html element
-      const photoLabelElement = this.findPhotoLabel(familyTree);
+      const photoLabelElement = FamilyTreeJsInterop.findPhotoLabel(familyTree);
       photoLabelElement?.classList.toggle('hasval', true);
 
       const photoInputElement = document.querySelector('input[data-binding="photo"');
@@ -106,7 +102,7 @@ class FamilyTreeJsInterop {
     }
   }
 
-  private findPhotoLabel(familyTree: FamilyTree): HTMLLabelElement | undefined {
+  private static findPhotoLabel(familyTree: FamilyTree): HTMLLabelElement | undefined {
     const elements = familyTree.config.editForm?.elements;
     if (!elements) {
       return;
