@@ -11,8 +11,6 @@
     // This preserves the directory of the TS files
     "rootDir": "./",
     "moduleResolution": "node",
-    // "allowJs": true,
-    // "checkJs": false,
   },
   "include": [
     "**/*.ts",
