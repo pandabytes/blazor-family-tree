@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <Target Name="RemoveWwwRootBeforeBuild" BeforeTargets="BeforeBuild">
-    <RemoveDir Directories="$(MSBuildProjectDirectory)/wwwroot/"/>
+    <RemoveDir Directories="$(ProjectRoot)/wwwroot/"/>
   </Target>
 
   <Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="$(ProjectRoot)/package.json" Outputs="$(NpmInstallStampFile)">
