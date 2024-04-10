@@ -14,16 +14,20 @@ declare global {
 }
 
 class FamilyTreeJsInterop {
-  FamilyTrees = new Map<string, FamilyTree>();
+  private familyTrees = new Map<string, FamilyTree>();
+
+  public treeExist(treeId: string): boolean {
+    return this.familyTrees.has(treeId);
+  }
 
   public setupFamilyTree(treeId: string, options?: FamilyTree.options) {
-    let familyTree = this.FamilyTrees.get(treeId);
+    let familyTree = this.familyTrees.get(treeId);
     if (familyTree) {
       return;
     }
 
     familyTree = new FamilyTree(`#${treeId}`, options);
-    this.FamilyTrees.set(treeId, familyTree);
+    this.familyTrees.set(treeId, familyTree);
   }
 
   public loadNodes(treeId: string, nodes: Array<Object>) {
@@ -81,7 +85,7 @@ class FamilyTreeJsInterop {
     // Destroy will remove all registered events
     // associated to this family tree object
     familyTree.destroy();
-    this.FamilyTrees.delete(treeId);
+    this.familyTrees.delete(treeId);
   }
 
   private static async uploadPhotoAsync(
@@ -137,7 +141,7 @@ class FamilyTreeJsInterop {
   }
 
   private getFamilyTree(treeId: string): FamilyTree {
-    const familyTree = this.FamilyTrees.get(treeId);
+    const familyTree = this.familyTrees.get(treeId);
     if (!familyTree) {
       throw new InvalidArgumentError(`Tree "${treeId}" not found.`);
     }

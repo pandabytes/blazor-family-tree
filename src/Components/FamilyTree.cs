@@ -12,13 +12,13 @@ public sealed partial class FamilyTree : BaseScopeComponent
   /// Specify the id of the tree.
   /// </summary>
   [Parameter, EditorRequired]
-  public string TreeId { get; set; } = string.Empty;
+  public string TreeId { get; init; } = string.Empty;
 
   /// <summary>
   /// Options to configure and/or initialize the family tree.
   /// </summary>
-  [Parameter, EditorRequired]
-  public FamilyTreeOptions Options { get; init; } = null!;
+  [Parameter]
+  public FamilyTreeOptions? Options { get; init; }
 
   /// <summary>
   /// Event that gets fired when a node is added, updated, and/or removed.
@@ -54,7 +54,7 @@ public sealed partial class FamilyTree : BaseScopeComponent
   /// Custom style for the family tree.
   /// </summary>
   [Parameter]
-  public string Style { get; set; } = "width: 100%; height: 100%;";
+  public string Style { get; init; } = string.Empty;
 
   /// <summary>
   /// Have to prefix with "tree" to satisfy selector format.
@@ -108,8 +108,25 @@ public sealed partial class FamilyTree : BaseScopeComponent
     }
   }
 
+  /// <inheritdoc />
+  protected override void OnParametersSet()
+  {
+    base.OnParametersSet();
+
+    if (string.IsNullOrWhiteSpace(TreeId))
+    {
+      throw new ArgumentException($"{nameof(TreeId)} cannot be empty.");
+    }
+  }
+
   private async Task SetupFamilyTreeAsync()
   {
+    var exist = await _familyTreeJsInterop.TreeExistAsync(TreeIdForInterop);
+    if (exist)
+    {
+      throw new ArgumentException($"Tree id \"{TreeId}\" already exists. Please use a different id.");
+    }
+
     await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, Options);
     await _familyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
 

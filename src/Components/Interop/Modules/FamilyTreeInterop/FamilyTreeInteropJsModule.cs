@@ -25,6 +25,9 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
     ModulePath = string.Join('/', pathComponents);
   }
 
+  public async Task<bool> TreeExistAsync(string treeId)
+    => await Module.InvokeAsync<bool>($"{FamilyTreeJsInteropModule}.treeExist", treeId);
+
   public async Task SetupFamilyTreeAsync(string treeId, FamilyTreeOptions? options = null)
   {
     if (options is null)
