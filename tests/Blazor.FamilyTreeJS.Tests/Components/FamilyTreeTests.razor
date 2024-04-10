@@ -1,0 +1,46 @@
+@inherits TestContext
+@using Blazor.FamilyTreeJS.Components
+
+@code
+{
+  private const string FamilyTreeJsInteropModule = "FamilyTreeJsInteropObj";
+
+  private readonly BunitJSModuleInterop _mockJsModule;
+
+  public FamilyTreeTests()
+  {
+    Services.AddBlazorFamilyJS();
+    _mockJsModule = JSInterop.SetupModule("./_content/Blazor.FamilyTreeJS/js/Components/Interop/Modules/FamilyTreeInterop/family-tree-interop.js");
+    _mockJsModule
+      .Setup<bool>($"{FamilyTreeJsInteropModule}.treeExist", _ => true)
+      .SetResult(false);
+  }
+
+  [Fact]
+  public void FamilyTree_EmptyTreeId_ThrowsException()
+  {
+    Assert.Throws<ArgumentException>(() => Render(@<FamilyTree TreeId=@string.Empty />));
+  }
+
+  [Fact]
+  public void FamilyTree_ValidTreeId_RendersDiv()
+  {
+    // Arrange
+    const string treeId = "test";
+    _mockJsModule
+      .SetupVoid($"{FamilyTreeJsInteropModule}.setupFamilyTree", _ => true);
+
+    // Act
+    var cut = Render(@<FamilyTree TreeId=@treeId />);
+
+    // Assert
+    var div = cut.Find("div");
+    Assert.NotNull(div);
+
+    var attrbs = div.Attributes
+      .ToDictionary(attrb => attrb.Name, attrb => attrb.Value);
+
+    Assert.Contains("id", attrbs);
+    Assert.Equal($"tree-{treeId}", attrbs["id"]);
+  }
+}
