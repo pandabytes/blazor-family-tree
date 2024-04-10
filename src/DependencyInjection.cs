@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace Blazor.FamilyTreeJS;
 
+/// <summary>
+/// Provide dependency injection methods to
+/// setup this library.
+/// </summary>
 public static class DependencyInjection
 {
   /// <summary>
@@ -32,19 +36,19 @@ public static class DependencyInjection
     return webHost;
   }
 
-  /// <summary>
-  /// Register classes that derive from <typeparamref name="TBase"/>
-  /// into the JSON serialization/deserialization process. This
-  /// enables the derived classes to be serialized/deserialized
-  /// correctly with their custom properties.
-  /// </summary>
-  /// <param name="types">Types that derive from <typeparamref name="TBase"/>.</param>
-  /// <exception cref="InvalidOperationException">
-  /// Thrown when <paramref name="types"/> do not derive
-  /// from <typeparamref name="TBase"/>.
-  /// </exception>
-
-  public static WebAssemblyHost UseDerivedTypes<TBase>(this WebAssemblyHost webHost, params Type[] types)
+    /// <summary>
+    /// Register classes that derive from <typeparamref name="TBase"/>
+    /// into the JSON serialization/deserialization process. This
+    /// enables the derived classes to be serialized/deserialized
+    /// correctly with their custom properties.
+    /// </summary>
+    /// <param name="webHost"></param>
+    /// <param name="types">Types that derive from <typeparamref name="TBase"/>.</param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when <paramref name="types"/> do not derive
+    /// from <typeparamref name="TBase"/>.
+    /// </exception>
+    public static WebAssemblyHost UseDerivedTypes<TBase>(this WebAssemblyHost webHost, params Type[] types)
     where TBase : class
   {
     var jsRuntime = webHost.Services.GetRequiredService<IJSRuntime>();
@@ -64,7 +68,6 @@ public static class DependencyInjection
   /// See https://github.com/dotnet/aspnetcore/issues/12685#issuecomment-603050776
   /// </summary>
   /// <param name="jsRuntime"></param>
-  /// <returns></returns>
   /// <exception cref="ArgumentException"></exception>
   private static JsonSerializerOptions GetJsonSerializerOptions(IJSRuntime jsRuntime)
   {

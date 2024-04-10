@@ -17,13 +17,12 @@ public record Menu(
   ActionCallbackInterop<string, object?>? OnClick = null
 );
 
-public record NodeMenu
-{
-  public Menu? Add { get; init; } = null;
-
-  public Menu? Details { get; init; } = null;
-
-  public Menu? Edit { get; init; } = null;
-
-  public Menu? Remove { get; init; } = null;
-}
+/// <summary>
+/// Mirror the FamilyTreeJS's options interface
+/// https://balkan.app/FamilyTreeJS/API/interfaces/FamilyTree.options
+/// </summary>
+public record NodeMenu(
+  Menu? Add = null,
+  Menu? Details = null,
+  Menu? Edit = null,Menu? Remove = null
+);

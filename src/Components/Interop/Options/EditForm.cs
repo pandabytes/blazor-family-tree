@@ -1,5 +1,9 @@
 namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 
+/// <summary>
+/// Mirror the FamilyTreeJS's options interface
+/// https://balkan.app/FamilyTreeJS/API/interfaces/FamilyTree.options
+/// </summary>
 public record ButtonEdit(
   string? Icon = null,
   string? Text = null,
@@ -7,8 +11,16 @@ public record ButtonEdit(
   bool? HideIfDetailsMode = null
 );
 
+/// <summary>
+/// Mirror the FamilyTreeJS's options interface
+/// https://balkan.app/FamilyTreeJS/API/interfaces/FamilyTree.options
+/// </summary>
 public record ValidatorContent(string? Required = null, string? Email = null);
 
+/// <summary>
+/// Mirror the FamilyTreeJS's options interface
+/// https://balkan.app/FamilyTreeJS/API/interfaces/FamilyTree.options
+/// </summary>
 public record EditFormElement(
   string? Type = null,
   string? Label = null,
@@ -19,6 +31,10 @@ public record EditFormElement(
   ValidatorContent? Vlidators = null
 );
 
+/// <summary>
+/// Mirror the FamilyTreeJS's options interface
+/// https://balkan.app/FamilyTreeJS/API/interfaces/FamilyTree.options
+/// </summary>
 public record EditForm(
   bool? ReadOnly = null,
   string? TitleBinding = null,

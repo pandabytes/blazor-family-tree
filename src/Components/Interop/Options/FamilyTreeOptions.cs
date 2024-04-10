@@ -1,5 +1,9 @@
 namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 
+/// <summary>
+/// Mirror the FamilyTreeJS's options interface
+/// https://balkan.app/FamilyTreeJS/API/interfaces/FamilyTree.options
+/// </summary>
 public record FamilyTreeOptions(
   string Mode = "light",
   bool? EnableSearch = null,
