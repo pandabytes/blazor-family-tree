@@ -5,7 +5,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.FamilyTreeJS", "src\Blazor.FamilyTreeJS.csproj", "{E8CE19F2-05FF-44F9-848C-021B67BDD33A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.FamilyTreeJS.Sample", "samples/Blazor.FamilyTreeJS.Sample.csproj", "{AFCB75C3-22BD-469D-BD8C-D181E66799A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.FamilyTreeJS.Sample", "samples\Blazor.FamilyTreeJS.Sample.csproj", "{AFCB75C3-22BD-469D-BD8C-D181E66799A3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3D997F92-5F5B-41DD-A01C-A9D334DE25A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.FamilyTreeJS.Tests", "tests\Blazor.FamilyTreeJS.Tests\Blazor.FamilyTreeJS.Tests.csproj", "{68D8B67E-F26E-4EB6-858F-91CDB80FF3A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +28,12 @@ Global
 		{AFCB75C3-22BD-469D-BD8C-D181E66799A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFCB75C3-22BD-469D-BD8C-D181E66799A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFCB75C3-22BD-469D-BD8C-D181E66799A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68D8B67E-F26E-4EB6-858F-91CDB80FF3A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68D8B67E-F26E-4EB6-858F-91CDB80FF3A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68D8B67E-F26E-4EB6-858F-91CDB80FF3A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68D8B67E-F26E-4EB6-858F-91CDB80FF3A3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{68D8B67E-F26E-4EB6-858F-91CDB80FF3A3} = {3D997F92-5F5B-41DD-A01C-A9D334DE25A1}
 	EndGlobalSection
 EndGlobal

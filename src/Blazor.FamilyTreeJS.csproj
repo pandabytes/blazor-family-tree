@@ -6,6 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!-- Make internal members visible to test project(s) -->
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+    <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Blazor.Core" Version="1.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />

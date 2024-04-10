@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 
-namespace Blazor.FamilyTreeJS.Interop;
+namespace Blazor.FamilyTreeJS.Components.Interop.Converters;
 
 internal class PolymorphicTypeResolver : DefaultJsonTypeInfoResolver
 {
@@ -10,13 +10,7 @@ internal class PolymorphicTypeResolver : DefaultJsonTypeInfoResolver
 
   public PolymorphicTypeResolver()
   {  
-    _typeJsonPolyOpts = new DefaultDictionary<Type, JsonPolymorphismOptions>(
-      () => new()
-      {
-        IgnoreUnrecognizedTypeDiscriminators = true,
-        UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
-      }
-    );
+    _typeJsonPolyOpts = new Dictionary<Type, JsonPolymorphismOptions>();
   }
 
   /// <inheritdoc />
@@ -53,7 +47,19 @@ internal class PolymorphicTypeResolver : DefaultJsonTypeInfoResolver
         throw new ArgumentException($"Type {type.FullName} doesn't inhereit class {baseType.FullName}.");
       }
 
-      _typeJsonPolyOpts[baseType].DerivedTypes.Add(new JsonDerivedType(type));
+      var found = _typeJsonPolyOpts.TryGetValue(baseType, out var jsonPolyOpts);
+      if (!found)
+      {
+        jsonPolyOpts = new()
+        {
+          IgnoreUnrecognizedTypeDiscriminators = true,
+          UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
+        };
+
+        _typeJsonPolyOpts.Add(baseType, jsonPolyOpts);
+      }
+
+      jsonPolyOpts!.DerivedTypes.Add(new JsonDerivedType(type));
     }
   }
 }
