@@ -7,12 +7,21 @@ internal sealed class DateOnlyJsonConverter : JsonConverter<DateOnly?>
 {
   public override DateOnly? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
   {
-    var dateTimeStr = reader.GetString();
-    if (string.IsNullOrWhiteSpace(dateTimeStr))
+    try
     {
-      return null;
+      var dateTimeStr = reader.GetString();
+      if (string.IsNullOrWhiteSpace(dateTimeStr))
+      {
+        return null;
+      }
+
+      return DateOnly.FromDateTime(reader.GetDateTime());
     }
-    return DateOnly.FromDateTime(reader.GetDateTime());
+    catch (Exception ex) when 
+      (ex is InvalidOperationException || ex is FormatException)
+    {
+      throw new JsonException("Fail to parse date.", ex);
+    }
   }
 
   public override void Write(Utf8JsonWriter writer, DateOnly? value, JsonSerializerOptions options)
