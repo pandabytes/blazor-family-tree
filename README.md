@@ -24,17 +24,28 @@ var app = builder
   .ConfigureIJSRuntimeJsonOptions();
 ```
 
-If you have classes/records that inhereit from classes/records in this library, then you must use
-the following extension method(s), `Use<type>DerivedTypes()`. This allows serializing
-your derived classes/records with all of their properties.
+If you have classes/records that inhereit from classes/records in this library, then you may
+need to use the following extension method, `UseDerivedTypes<BaseType>([derive types])`.
+This allows serializing your derived classes/records with all of their properties.
 ```cs
 var app = builder
   .Build()
   .ConfigureIJSRuntimeJsonOptions();
-  .UseNodeMenuDerivedTypes(typeof(CustomNodeMenu));
+  .UseDerivedTypes<Node>(typeof(NodeWithProfession))
+  .UseDerivedTypes<NodeMenu>(typeof(CollapseNodeMenu), typeof(DrawLineNodeMenu));
 
-public record CustomNodeMenu : NodeMenu
+public record NodeWithProfession : Node
 {
-  public Menu? Custom { get; init; } = null;
+  public string? Job { get; init; } = null;
+}
+
+public record CollapseNodeMenu : NodeMenu
+{
+  public Menu? Collapse { get; init; } = null;
+}
+
+public record DrawLineNodeMenu : NodeMenu
+{
+  public Menu? Draw { get; init; } = null;
 }
 ```

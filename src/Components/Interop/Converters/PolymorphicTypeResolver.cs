@@ -6,50 +6,54 @@ namespace Blazor.FamilyTreeJS.Interop;
 
 internal class PolymorphicTypeResolver : DefaultJsonTypeInfoResolver
 {
-  /// <summary>
-  /// Contain type information of classes that
-  /// derive from <see cref="NodeMenu"/>.
-  /// </summary>
-  private readonly JsonPolymorphismOptions _nodeMenuJsonPolyOptions;
+  private readonly IDictionary<Type, JsonPolymorphismOptions> _typeJsonPolyOpts;
 
   public PolymorphicTypeResolver()
-  {
-    _nodeMenuJsonPolyOptions = new()
-    {
-      IgnoreUnrecognizedTypeDiscriminators = true,
-      UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
-    };
+  {  
+    _typeJsonPolyOpts = new DefaultDictionary<Type, JsonPolymorphismOptions>(
+      () => new()
+      {
+        IgnoreUnrecognizedTypeDiscriminators = true,
+        UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
+      }
+    );
   }
 
+  /// <inheritdoc />
   public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
   {
-    JsonTypeInfo jsonTypeInfo = base.GetTypeInfo(type, options);
-    if (jsonTypeInfo.Type == typeof(NodeMenu) && _nodeMenuJsonPolyOptions.DerivedTypes.Any())
+    var jsonTypeInfo = base.GetTypeInfo(type, options);
+
+    var found = _typeJsonPolyOpts.TryGetValue(jsonTypeInfo.Type, out var jsonPolyOpts);
+    if (found && jsonPolyOpts!.DerivedTypes.Any())
     {
-      jsonTypeInfo.PolymorphismOptions = _nodeMenuJsonPolyOptions;
+      jsonTypeInfo.PolymorphismOptions = jsonPolyOpts;
     }
+
     return jsonTypeInfo;
   }
 
   /// <summary>
   /// Add custom derived classes that inhereit from
-  /// <see cref="NodeMenu"/> to be serialized.
+  /// <typeparamref name="TBase"/> to be serialized.
   /// </summary>
-  /// <param name="types">ypes that inhereit <see cref="NodeMenu"/></param>
+  /// <param name="types">
+  /// Types that inhereit <typeparamref name="TBase"/>.
+  /// </param>
   /// <exception cref="ArgumentException">
-  /// Thrown when a type does not inhereit <see cref="NodeMenu"/>
+  /// Thrown when a type does not inhereit <typeparamref name="TBase"/>.
   /// </exception>
-  public void AddDerivedNodeMenuTypes(params Type[] types)
+  public void AddDerivedTypes<TBase>(params Type[] types) where TBase : class
   {
-    var nodeMenuType = typeof(NodeMenu);
+    var baseType = typeof(TBase);
     foreach (var type in types)
     {
-      if (!nodeMenuType.IsAssignableFrom(type))
+      if (!baseType.IsAssignableFrom(type))
       {
-        throw new ArgumentException($"Type {type.FullName} doesn't inhereit class {nodeMenuType.FullName}.");
+        throw new ArgumentException($"Type {type.FullName} doesn't inhereit class {baseType.FullName}.");
       }
 
-      _nodeMenuJsonPolyOptions.DerivedTypes.Add(new JsonDerivedType(type));
+      _typeJsonPolyOpts[baseType].DerivedTypes.Add(new JsonDerivedType(type));
     }
   }
 }

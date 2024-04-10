@@ -34,27 +34,30 @@ public static class DependencyInjection
   }
 
   /// <summary>
-  /// Register classes that derive from <see cref="NodeMenu"/>
+  /// Register classes that derive from <typeparamref name="TBase"/>
   /// into the JSON serialization/deserialization process. This
   /// enables the derived classes to be serialized/deserialized
   /// correctly with their custom properties.
   /// </summary>
-  /// <param name="types">Types that derive from <see cref="NodeMenu"/></param>
+  /// <param name="types">Types that derive from <typeparamref name="TBase"/>.</param>
   /// <exception cref="InvalidOperationException">
   /// Thrown when <paramref name="types"/> do not derive
-  /// from <see cref="NodeMenu"/>.
+  /// from <typeparamref name="TBase"/>.
   /// </exception>
-  public static WebAssemblyHost UseNodeMenuDerivedTypes(this WebAssemblyHost webHost, params Type[] types)
+
+  public static WebAssemblyHost UseDerivedTypes<TBase>(this WebAssemblyHost webHost, params Type[] types)
+    where TBase : class
   {
     var jsRuntime = webHost.Services.GetRequiredService<IJSRuntime>();
     var options = GetJsonSerializerOptions(jsRuntime);
     if (options.TypeInfoResolver is not PolymorphicTypeResolver polymorhphicResolver)
     {
       throw new InvalidOperationException($"Expect {nameof(JsonSerializerOptions.TypeInfoResolver)} to be " +
-                                          $"of type {nameof(PolymorphicTypeResolver)}.");
+                                          $"of type {nameof(PolymorphicTypeResolver)}. Please call " +
+                                          $"method {nameof(ConfigureIJSRuntimeJsonOptions)} first.");
     }
 
-    polymorhphicResolver.AddDerivedNodeMenuTypes(types);
+    polymorhphicResolver.AddDerivedTypes<TBase>(types);
     return webHost;
   }
 
