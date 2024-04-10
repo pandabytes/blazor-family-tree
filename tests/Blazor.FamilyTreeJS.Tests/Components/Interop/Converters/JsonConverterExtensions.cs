@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Blazor.FamilyTreeJS.Tests.Components.Converters;
+namespace Blazor.FamilyTreeJS.Tests.Components.Interop.Converters;
 
 /// <summary>
 /// Taken from: https://khalidabuhakmeh.com/systemtextjson-jsonconverter-test-helpers

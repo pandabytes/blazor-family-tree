@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Blazor.FamilyTreeJS.Tests.Components.Converters;
+namespace Blazor.FamilyTreeJS.Tests.Components.Interop.Converters;
 
 public class DateOnlyJsonConverterTests
 {
