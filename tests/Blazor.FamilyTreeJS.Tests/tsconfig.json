@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": false,
+    "module": "CommonJS",
+    "outDir": "mocha-tests/",
+    "rootDirs": ["./", "../../src"],
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@family-tree-interop": [
+        "../../src/Components/Interop/Modules/FamilyTreeInterop/family-tree-interop"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}

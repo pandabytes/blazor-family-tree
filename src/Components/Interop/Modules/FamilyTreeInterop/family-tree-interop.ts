@@ -20,6 +20,14 @@ class FamilyTreeJsInterop {
     return this.familyTrees.has(treeId);
   }
 
+  public getFamilyTree(treeId: string): FamilyTree {
+    const familyTree = this.familyTrees.get(treeId);
+    if (!familyTree) {
+      throw new InvalidArgumentError(`Tree "${treeId}" not found.`);
+    }
+    return familyTree;
+  }
+
   public setupFamilyTree(treeId: string, options?: FamilyTree.options) {
     let familyTree = this.familyTrees.get(treeId);
     if (familyTree) {
@@ -133,19 +141,11 @@ class FamilyTreeJsInterop {
     }
 
     const htmlLabelElements = document.getElementsByTagName('label');
-    for (const htmlElement of htmlLabelElements) {
+    for (const htmlElement of <any>htmlLabelElements) {
       if (hasPhoto(htmlElement.textContent)) {
         return htmlElement;
       }
     }
-  }
-
-  private getFamilyTree(treeId: string): FamilyTree {
-    const familyTree = this.familyTrees.get(treeId);
-    if (!familyTree) {
-      throw new InvalidArgumentError(`Tree "${treeId}" not found.`);
-    }
-    return familyTree;
   }
 }
 
