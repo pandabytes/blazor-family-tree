@@ -88,10 +88,13 @@ class FamilyTreeJsInterop {
   }
 
   public destroyTree(treeId: string): void {
-    const familyTree = this.getFamilyTree(treeId);
+    if (!this.treeExist(treeId)) {
+      return;
+    }
 
     // Destroy will remove all registered events
     // associated to this family tree object
+    const familyTree = this.getFamilyTree(treeId);
     familyTree.destroy();
     this.familyTrees.delete(treeId);
   }

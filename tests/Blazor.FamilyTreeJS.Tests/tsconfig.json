@@ -9,6 +9,7 @@
     "outDir": "mocha-tests/",
     "rootDirs": ["./", "../../src"],
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "baseUrl": "./",
     "paths": {
       "@family-tree-interop": [
