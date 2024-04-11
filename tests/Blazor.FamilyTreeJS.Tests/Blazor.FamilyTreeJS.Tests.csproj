@@ -40,6 +40,7 @@
     <NpmInstallStampFile>$(ProjectRoot)/node_modules/.install-stamp</NpmInstallStampFile>
     <JavaScriptTestFramework>Mocha</JavaScriptTestFramework>
     <JavaScriptTestRoot>mocha-tests\</JavaScriptTestRoot>
+    <AutoRunNpmTest>true</AutoRunNpmTest>
   </PropertyGroup>
 
   <Target Name="RemoveTestBeforeBuild" BeforeTargets="BeforeBuild">
@@ -52,7 +53,7 @@
     <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
   </Target>
 
-  <Target Name="RunNpmBuild" AfterTargets="VSTest">
+  <Target Name="RunNpmTest" AfterTargets="VSTest" Condition="$(AutoRunNpmTest)">
     <Exec WorkingDirectory="$(ProjectRoot)"
           Command="npm run test" />
   </Target>
