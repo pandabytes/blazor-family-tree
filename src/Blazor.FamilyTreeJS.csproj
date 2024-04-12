@@ -7,6 +7,33 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Version>0.0.0</Version>
+    <Authors>pandabytes</Authors>
+    <Description>Wrapper Blazor library for FamilyTreeJS.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/pandabytes/blazor-family-tree</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>blazor,javascript interop,family,tree</PackageTags>
+  </PropertyGroup>
+
+  <!-- Include files for packaging -->
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- Exclude files from packaging -->
+  <Target Name="RemoveFilesFromPackage" AfterTargets="CompileTypeScriptWithTSConfig">
+    <ItemGroup>
+      <Content Remove="**\tsconfig.json" />
+      <Content Remove="**\package-lock.json" />
+      <Content Remove="**\package.json" />
+      <Content Remove="**\rollup.config.js" />
+    </ItemGroup>
+  </Target>
+
   <!-- Make internal members visible to test project(s) -->
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">

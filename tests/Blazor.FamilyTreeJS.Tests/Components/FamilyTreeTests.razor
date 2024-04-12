@@ -28,6 +28,12 @@
       .SetVoidResult();
   }
 
+  protected override void Dispose(bool disposing)
+  {
+    DisposeComponents();
+    base.Dispose(disposing);
+  }
+
   [Fact]
   public void FamilyTree_EmptyTreeId_ThrowsException()
   {
