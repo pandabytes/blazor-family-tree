@@ -57,6 +57,25 @@ public sealed partial class FamilyTree : BaseScopeComponent
   public string Style { get; init; } = string.Empty;
 
   /// <summary>
+  /// Invoke the registered Action after the FamilyTree
+  /// component is first rendered. This is only invoked once.
+  /// Useful to know when the FamilyTree is available to use.
+  /// This is invoked before <see cref="AfterFamilyTreeRenderAsync"/>.
+  /// </summary>
+  [Parameter]
+  public Action? AfterFamilyTreeRender { get; init; }
+
+  /// <summary>
+  /// Invoke the registered Func asynchronously
+  /// after the FamilyTree component is first rendered.
+  /// This is only invoked once. Useful to know when the
+  /// FamilyTree is available to use. This is invoked
+  /// after <see cref="AfterFamilyTreeRender"/>.
+  /// </summary>
+  [Parameter]
+  public Func<Task>? AfterFamilyTreeRenderAsync { get; init; }
+
+  /// <summary>
   /// Have to prefix with "tree" to satisfy selector format.
   /// </summary>
   private string TreeIdForInterop => $"tree-{TreeId}";
@@ -102,9 +121,17 @@ public sealed partial class FamilyTree : BaseScopeComponent
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
     await base.OnAfterRenderAsync(firstRender);
+
     if (firstRender)
     {
       await SetupFamilyTreeAsync();
+
+      AfterFamilyTreeRender?.Invoke();
+
+      if (AfterFamilyTreeRenderAsync is not null)
+      {
+        await AfterFamilyTreeRenderAsync.Invoke();
+      }
     }
   }
 

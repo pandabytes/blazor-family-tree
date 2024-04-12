@@ -1,19 +1,31 @@
 @inherits TestContext
 @using Blazor.FamilyTreeJS.Components
+@using NSubstitute
 
 @code
 {
   private const string FamilyTreeJsInteropModule = "FamilyTreeJsInteropObj";
+
+  private const string ModulePath =
+    "./_content/Blazor.FamilyTreeJS/js/Components/Interop/Modules/FamilyTreeInterop/family-tree-interop.js";
 
   private readonly BunitJSModuleInterop _mockJsModule;
 
   public FamilyTreeTests()
   {
     Services.AddBlazorFamilyJS();
-    _mockJsModule = JSInterop.SetupModule("./_content/Blazor.FamilyTreeJS/js/Components/Interop/Modules/FamilyTreeInterop/family-tree-interop.js");
+    _mockJsModule = JSInterop.SetupModule(ModulePath);
     _mockJsModule
       .Setup<bool>($"{FamilyTreeJsInteropModule}.treeExist", _ => true)
       .SetResult(false);
+
+    _mockJsModule
+      .SetupVoid($"{FamilyTreeJsInteropModule}.setupFamilyTree", _ => true)
+      .SetVoidResult();
+
+    _mockJsModule
+      .SetupVoid($"{FamilyTreeJsInteropModule}.registerUpdateNodeHandler", _ => true)
+      .SetVoidResult();
   }
 
   [Fact]
@@ -26,12 +38,11 @@
   public void FamilyTree_ValidTreeId_RendersDiv()
   {
     // Arrange
+    const string style = "width: 50%; height: 50%;";
     const string treeId = "test";
-    _mockJsModule
-      .SetupVoid($"{FamilyTreeJsInteropModule}.setupFamilyTree", _ => true);
 
     // Act
-    var cut = Render(@<FamilyTree TreeId=@treeId />);
+    var cut = Render(@<FamilyTree TreeId=@treeId Style=@style />);
 
     // Assert
     var div = cut.Find("div");
@@ -40,7 +51,72 @@
     var attrbs = div.Attributes
       .ToDictionary(attrb => attrb.Name, attrb => attrb.Value);
 
+    Assert.Contains("style", attrbs);
+    Assert.Equal(style, attrbs["style"]);
+
     Assert.Contains("id", attrbs);
     Assert.Equal($"tree-{treeId}", attrbs["id"]);
+  }
+
+  [Fact]
+  public void FamilyTree_SameTreeId_ThrowsException()
+  {
+    // Arrange
+    const string treeId = "test";
+
+    _mockJsModule
+      .Setup<bool>($"{FamilyTreeJsInteropModule}.treeExist", _ => true)
+      .SetResult(true);
+
+    // Act & Assert
+    Assert.Throws<ArgumentException>(() => Render(@<FamilyTree TreeId=@treeId />));
+  }
+
+  [Fact]
+  public void FamilyTree_RegisterAfterFamilyTreeRenderCallback_CallbackIsInvoked()
+  {
+    // Arrange
+    var actionSub = Substitute.For<Action>();
+
+    // Act
+    var cut = Render(@<FamilyTree TreeId="test" AfterFamilyTreeRender=@actionSub />);
+
+    // Arrange
+    actionSub.ReceivedWithAnyArgs().Invoke();
+  }
+
+  [Fact]
+  public void FamilyTree_RegisterAfterFamilyTreeRenderAsyncCallback_CallbackIsInvoked()
+  {
+    // Arrange
+    var funcSub = Substitute.For<Func<Task>>();
+
+    // Act
+    var cut = Render(@<FamilyTree TreeId="test" AfterFamilyTreeRenderAsync=@funcSub />);
+
+    // Arrange
+    funcSub.ReceivedWithAnyArgs().Invoke();
+  }
+
+  [Fact]
+  public void FamilyTree_RegisterBothAfterFamilyTreeRenderCallbacks_CallbacksIsInvokedInOrder()
+  {
+    // Arrange
+    var callbacks = new List<string>();
+    var actionSub = () => callbacks.Add("action");
+    var funcSub = () =>
+    {
+      callbacks.Add("func");
+      return Task.CompletedTask;
+    };
+
+    // Act
+    var cut = Render(@<FamilyTree TreeId="test" 
+                                  AfterFamilyTreeRender=@actionSub
+                                  AfterFamilyTreeRenderAsync=@funcSub />);
+
+    // Arrange
+    Assert.Equal("action", callbacks[0]);
+    Assert.Equal("func", callbacks[1]);
   }
 }
