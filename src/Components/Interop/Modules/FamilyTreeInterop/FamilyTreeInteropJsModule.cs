@@ -6,12 +6,19 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
 
   private readonly ObjectTraversal _objectTraversal;
 
+  /// <summary>
+  /// This stores the callbacks supplied by the client.
+  /// </summary>
+  private readonly IList<BaseCallbackInterop> _clientCallbacks;
+
   protected override string ModulePath { get; }
 
   public FamilyTreeInteropJsModule(ObjectTraversal objectTraversal, IJSRuntime jSRuntime)
     : base(jSRuntime)
   {
     _objectTraversal = objectTraversal;
+    _clientCallbacks = new List<BaseCallbackInterop>();
+
     var pathComponents = new string[]
     {
       ModulePrefixPath,
@@ -48,7 +55,7 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
 
     foreach (var callbackInterop in baseCallbackInterops)
     {
-      _callbackInterops.Add(callbackInterop);
+      _clientCallbacks.Add(callbackInterop);
     }
   }
 
@@ -88,10 +95,27 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
   {
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.destroyTree", treeId);
 
+    // For callbacks that we create internally (within this class), it's safe to
+    // dispose them. But for callbacks created by the client, we defer
+    // disposing them in DisposeAsyncCore because the client owns those callbacks
+    // and we don't want to dispose them when DestroyTreeAsync is called.
+    // Calling DestroyTreeAsync() does not mean we release all resources.
     foreach (var callbackInterop in _callbackInterops)
     {
       callbackInterop.Dispose();
     }
     _callbackInterops.Clear();
+  }
+
+  /// <inheritdoc />
+  protected override async ValueTask DisposeAsyncCore()
+  {
+    foreach (var callbackInterop in _clientCallbacks)
+    {
+      callbackInterop.Dispose();
+    }
+    _clientCallbacks.Clear();
+
+    await base.DisposeAsyncCore();
   }
 }
