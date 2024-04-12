@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import { describe, it } from 'mocha';
 import { FamilyTreeJsInteropObj } from '../../../../../../src/Components/Interop/Modules/FamilyTreeInterop/family-tree-interop';
 
-// This is the id defined in teh dom-mock.js
+// This is the id defined in dom-mock.js
 const TreeId = 'tree';
 
 describe('family-tree-interop-tests', () => {
