@@ -91,6 +91,15 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerPhotoUploadHandler", treeId, callbackInterop);
   }
 
+  /// <summary>
+  /// Destroy the tree object in JS (removing it from view). This doesn't mean
+  /// disposing all resources, it simply removes the FamilyTree object in JS.
+  /// Do not rely on this object's dispose method to "destroy" the family tree.
+  /// The caller must explicitly destroy the family tree and then dispose this
+  /// object. The dispose method in this object is only responsible for disposing
+  /// itself not the FamilyTree object in JS.
+  /// </summary>
+  /// <param name="treeId">Id of tree to be destroyed.</param>
   public async Task DestroyTreeAsync(string treeId)
   {
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.destroyTree", treeId);
