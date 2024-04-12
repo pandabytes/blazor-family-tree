@@ -21,10 +21,41 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.2.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Blazor.FamilyTreeJS.csproj" />
   </ItemGroup>
+
+  <!-- Run "npm install" when package.json has not changed.
+       This prevents npm install to run every time dotnet build is run.
+       Taken from: https://www.meziantou.net/running-npm-tasks-when-building-a-dotnet-project.htm
+  -->
+  <PropertyGroup>
+    <ProjectRoot>$(MSBuildProjectDirectory)</ProjectRoot>
+    <NpmInstallStampFile>$(ProjectRoot)/node_modules/.install-stamp</NpmInstallStampFile>
+    <JavaScriptTestFramework>Mocha</JavaScriptTestFramework>
+    <JavaScriptTestRoot>mocha-tests\</JavaScriptTestRoot>
+    <AutoRunNpmTest>true</AutoRunNpmTest>
+  </PropertyGroup>
+
+  <Target Name="RemoveTestBeforeBuild" BeforeTargets="BeforeBuild">
+    <RemoveDir Directories="$(ProjectRoot)/$(JavaScriptTestRoot)/"/>
+  </Target>
+
+  <Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="$(ProjectRoot)/package.json" Outputs="$(NpmInstallStampFile)">
+    <Exec WorkingDirectory="$(NpmRoot)"
+          Command="npm install" />
+    <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
+  </Target>
+
+  <Target Name="RunNpmTest" AfterTargets="VSTest" Condition="$(AutoRunNpmTest)">
+    <Exec WorkingDirectory="$(ProjectRoot)"
+          Command="npm run test" />
+  </Target>
 
 </Project>

@@ -490,3 +490,4 @@ family-tree-interop.js.map
 
 src/**/wwwroot/**/*.js
 src/tools/NativeCredentialStore/tools/**
+mocha-tests/
