@@ -5,6 +5,8 @@ and it is only compatible for Blazor WASM.
 
 FamilyTreeJS version: `1.9.18`
 
+See samples on [Github page](https://pandabytes.github.io/blazor-family-tree/).
+
 # Installation
 Install from Nuget (not available yet).
 ```
@@ -49,3 +51,19 @@ public record DrawLineNodeMenu : NodeMenu
   public Menu? Draw { get; init; } = null;
 }
 ```
+
+# Usage
+Simplest usage is to provide a tree id.
+```razor
+<FamilyTree TreeId="my-tree" />
+```
+
+This library is heavily driven by the `FamilyTreeOptions` class so almost
+every control and UI are specified via this class. This C# class mirrors this
+Typescript [options](https://balkan.app/FamilyTreeJS/API/interfaces/FamilyTree.options) interface.
+```razor
+<FamilyTree TreeId="my-tree" Options=@new() { Mode = "dark" } />
+```
+
+Please refer to the [sample project](https://github.com/pandabytes/blazor-family-tree/tree/master/samples/Blazor.FamilyTreeJS.Sample/Pages)
+for more examples.
