@@ -1,12 +1,23 @@
-﻿@page "/"
-@using Blazor.FamilyTreeJS.Components.Interop.Events
+﻿@page "/empty-tree-with-options"
 
-<FamilyTree @ref=@_familyTree
-            OnUpdatedNode=@OnUpdateNode
-            OnDefaultFirstNode=@OnDefaultFirstNode
-            OnPhotoUpload=@OnPhotoUpload
-            TreeId="x"
-            Options=@_options />
+<PageTitle>Tree Options</PageTitle>
+
+<h1>Empty Tree with Options</h1>
+
+<button class="btn btn-primary" style="margin-bottom: 0.5rem;" @onclick=@OnResetClick>
+  Reset
+</button>
+
+<p>Number of nodes in family tree: @_nodesCount</p>
+
+<div style="margin-left: 5rem; margin-right: 5rem;">
+  <FamilyTree @ref=@_familyTree
+              OnUpdatedNode=@OnUpdateNode
+              OnDefaultFirstNode=@OnDefaultFirstNode
+              OnPhotoUpload=@OnPhotoUpload
+              TreeId="empty-tree-with-options"
+              Options=@_options />
+</div>
 
 @code
 {
@@ -14,17 +25,33 @@
 
   private FamilyTree _familyTree = null!;
 
+  private int _nodesCount = 0;
+
   private void OnUpdateNode(UpdateNodeArgs args)
   {
-    Console.WriteLine(args);
+    _nodesCount += args.AddNodesData.Count;
+    if (args.RemoveNodeId is not null)
+    {
+      _nodesCount -= 1;
+    }
+
+    StateHasChanged();
   }
 
   private Node OnDefaultFirstNode()
-    => new() { Id = "_", Gender = Gender.Male };
+  {
+    _nodesCount += 1;
+    StateHasChanged();
+    return new() { Id = "_", Gender = Gender.Male };
+  }
 
   private Task<string> OnPhotoUpload(PhotoUploadArgs args)
+    => Task.FromResult("After the photo is uploaded, its URL should be set here.");
+
+  private async Task OnResetClick()
   {
-    return Task.FromResult("https://cdn.dribbble.com/userupload/2558591/file/original-473e5e88a03fbc49313c1613932d58b5.png?resize=2048x1536");
+    await _familyTree.ResetAsync();
+    _nodesCount = 0;
   }
 
   protected override void OnInitialized()
@@ -38,7 +65,6 @@
         { NodeBinding.Img0, "photo" },
       },
       NodeMenu: new() {
-        Add = new(Text: "Add node"),
         Details = new(Text: "Show details"),
         Edit = new(Text: "Edit details"),
         Remove = new(
@@ -52,7 +78,7 @@
         )
       },
       NodeTreeMenu: true,
-      EditForm: new EditForm(
+      EditForm: new(
         ReadOnly: false,
         PhotoBinding: "photo",
         AddMore: string.Empty,

@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Blazor.FamilyTreeJS;
 using Blazor.FamilyTreeJS.Sample;
+
+using Blazor.FamilyTreeJS;
 using Blazor.Core;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

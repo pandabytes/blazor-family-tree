@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Blazor.FamilyTreeJS.csproj" />
+    <ProjectReference Include="..\..\src\Blazor.FamilyTreeJS.csproj" />
   </ItemGroup>
 
 </Project>
