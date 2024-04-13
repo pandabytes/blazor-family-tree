@@ -6,11 +6,25 @@
 import type { DotNet as NpmDotNet } from '@microsoft/dotnet-js-interop';
 
 import { InvalidArgumentError } from './errors';
-import { PhotoUploadArgs, UpdateNodeArgs } from './event-args';
 import FamilyTree from '@balkangraph/familytree.js';
 
 declare global {
   const DotNet: typeof NpmDotNet;
+}
+
+/*
+  These types & their properties must match
+  with the classes and properties defined in C# code.
+*/
+type UpdateNodeArgs = {
+  addNodesData: Array<object>,
+  updateNodesData: Array<object>,
+  removeNodeId: number | string
+}
+
+type PhotoUploadArgs = {
+  fileName: string,
+  fileStreamReference: any
 }
 
 class FamilyTreeJsInterop {

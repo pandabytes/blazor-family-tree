@@ -8,7 +8,7 @@ FamilyTreeJS version: `1.9.18`
 See samples on [Github page](https://pandabytes.github.io/blazor-family-tree/).
 
 # Installation
-Install from Nuget (not available yet).
+Install from [Nuget](https://www.nuget.org/packages/Blazor.FamilyTreeJS).
 ```
 dotnet add package Blazor.FamilyTreeJS --version <latest-version>
 ```
