@@ -57,8 +57,7 @@ jobs:
     name: Deploy sample app to Github page
     runs-on: ubuntu-latest
     needs: [build]
-    # if: github.ref == 'refs/heads/master'
-    if: false # Temp skil this job
+    if: github.ref == 'refs/heads/master'
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
@@ -67,7 +66,7 @@ jobs:
 
     env:
       PUBLISH_FOLDER: publish-release
-      PROJECT_FILE: samples/Blazor.FamilyTreeJS.Sample.csproj
+      PROJECT_FILE: samples/Blazor.FamilyTreeJS.Sample/Blazor.FamilyTreeJS.Sample.csproj
       ARTIFACT_NAME: github-pages
 
     steps:
