@@ -11,8 +11,16 @@
 
   private readonly BunitJSModuleInterop _mockJsModule;
 
+  /// <summary>
+  /// Some tests may not need to call DisposeComponents at the end,
+  /// hence you can use this field to control when to call DisposeComponents.
+  /// </summary>
+  private bool _shouldDispose;
+
   public FamilyTreeTests()
   {
+    _shouldDispose = true;
+
     Services.AddBlazorFamilyJS();
     _mockJsModule = JSInterop.SetupModule(ModulePath);
     _mockJsModule
@@ -26,11 +34,18 @@
     _mockJsModule
       .SetupVoid($"{FamilyTreeJsInteropModule}.registerUpdateNodeHandler", _ => true)
       .SetVoidResult();
+
+    _mockJsModule
+      .SetupVoid($"{FamilyTreeJsInteropModule}.destroyTree", _ => true)
+      .SetVoidResult();
   }
 
   protected override void Dispose(bool disposing)
   {
-    DisposeComponents();
+    if (_shouldDispose)
+    {
+      DisposeComponents();
+    }
     base.Dispose(disposing);
   }
 
@@ -38,6 +53,7 @@
   public void FamilyTree_EmptyTreeId_ThrowsException()
   {
     Assert.Throws<ArgumentException>(() => Render(@<FamilyTree TreeId=@string.Empty />));
+    _shouldDispose = false;
   }
 
   [Fact]
