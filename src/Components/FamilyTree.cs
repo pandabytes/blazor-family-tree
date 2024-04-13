@@ -146,6 +146,13 @@ public sealed partial class FamilyTree : BaseScopeComponent
     }
   }
 
+  /// <inheritdoc/>
+  protected override async ValueTask DisposeAsyncCore()
+  {
+    await _familyTreeJsInterop.DestroyTreeAsync(TreeIdForInterop);
+    await base.DisposeAsyncCore();
+  }
+
   private async Task SetupFamilyTreeAsync()
   {
     var exist = await _familyTreeJsInterop.TreeExistAsync(TreeIdForInterop);

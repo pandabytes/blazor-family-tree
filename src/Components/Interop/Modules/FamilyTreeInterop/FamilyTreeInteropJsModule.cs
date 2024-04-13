@@ -6,12 +6,19 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
 
   private readonly ObjectTraversal _objectTraversal;
 
+  /// <summary>
+  /// This stores the callbacks supplied by the client.
+  /// </summary>
+  private readonly IList<BaseCallbackInterop> _clientCallbacks;
+
   protected override string ModulePath { get; }
 
   public FamilyTreeInteropJsModule(ObjectTraversal objectTraversal, IJSRuntime jSRuntime)
     : base(jSRuntime)
   {
     _objectTraversal = objectTraversal;
+    _clientCallbacks = new List<BaseCallbackInterop>();
+
     var pathComponents = new string[]
     {
       ModulePrefixPath,
@@ -48,7 +55,7 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
 
     foreach (var callbackInterop in baseCallbackInterops)
     {
-      _callbackInterops.Add(callbackInterop);
+      _clientCallbacks.Add(callbackInterop);
     }
   }
 
@@ -84,14 +91,40 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerPhotoUploadHandler", treeId, callbackInterop);
   }
 
+  /// <summary>
+  /// Destroy the tree object in JS (removing it from view). This doesn't mean
+  /// disposing all resources, it simply removes the FamilyTree object in JS.
+  /// Do not rely on this object's dispose method to "destroy" the family tree.
+  /// The caller must explicitly destroy the family tree and then dispose this
+  /// object. The dispose method in this object is only responsible for disposing
+  /// itself not the FamilyTree object in JS.
+  /// </summary>
+  /// <param name="treeId">Id of tree to be destroyed.</param>
   public async Task DestroyTreeAsync(string treeId)
   {
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.destroyTree", treeId);
 
+    // For callbacks that we create internally (within this class), it's safe to
+    // dispose them. But for callbacks created by the client, we defer
+    // disposing them in DisposeAsyncCore because the client owns those callbacks
+    // and we don't want to dispose them when DestroyTreeAsync is called.
+    // Calling DestroyTreeAsync() does not mean we release all resources.
     foreach (var callbackInterop in _callbackInterops)
     {
       callbackInterop.Dispose();
     }
     _callbackInterops.Clear();
+  }
+
+  /// <inheritdoc />
+  protected override async ValueTask DisposeAsyncCore()
+  {
+    foreach (var callbackInterop in _clientCallbacks)
+    {
+      callbackInterop.Dispose();
+    }
+    _clientCallbacks.Clear();
+
+    await base.DisposeAsyncCore();
   }
 }

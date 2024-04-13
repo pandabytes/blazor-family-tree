@@ -1,0 +1,268 @@
+﻿@page "/clint-eastwood-family-tree"
+
+<PageTitle>Clint Eastwood</PageTitle>
+
+<h1>Family tree of actor Clint Eastwood</h1>
+
+<p>
+  Sources of this family tree are from <a href="https://en.geneastar.org/genealogy/clintoneastwoodc/clint-e">here</a>
+  and <a href="https://www.entitree.com/en/family_tree/Clint_Eastwood?0u0=u&0u1=u">here</a>.
+</p>
+
+<button class="btn btn-primary" style="margin-bottom: 0.5rem;" @onclick=@OnResetClick>
+  Reset
+</button>
+
+<div style="margin-left: 5rem; margin-right: 5rem;">
+  <FamilyTree @ref=@_familyTree
+              OnDefaultFirstNode=@OnDefaultFirstNode
+              OnPhotoUpload=@OnPhotoUpload
+              AfterFamilyTreeRenderAsync=@LoadClintEastwoodFamilyAsync
+              TreeId="empty-tree-with-options"
+              Options=@_options />
+</div>
+
+@code
+{
+  private FamilyTreeOptions _options = null!;
+
+  private FamilyTree _familyTree = null!;
+
+  private async Task LoadClintEastwoodFamilyAsync()
+  {
+    await _familyTree.LoadNodesAsync(new List<Node>()
+    {
+      // Actor Clint Eastwood's dad side
+      new()
+      {
+        Id = "clint-e-1",
+        Gender = Gender.Male,
+        Name = "Clinton Eastwood",
+        FatherId = "burr-e",
+        MotherId = "jesse-a",
+        PartnerIds = new List<string> { "mar-r" }
+      },
+      new()
+      {
+        Id = "burr-e",
+        Gender = Gender.Male,
+        Name = "Burr Eastwood",
+        BirthDate = new(1871, 1, 1),
+        DeathDate = new(1963, 1, 1),
+        PartnerIds = new List<string> { "jesse-a" }
+      },
+      new()
+      {
+        Id = "jesse-a",
+        Gender = Gender.Female,
+        Name = "Jesse Mabel Anderson",
+        BirthDate = new(1871, 1, 1),
+        PartnerIds = new List<string> { "burr-e" }
+      },
+      
+      // Actor Clint Eastwood
+      new()
+      {
+        Id = "clint-e-2",
+        Gender = Gender.Male,
+        Name = "Clinton Eastwood",
+        FatherId = "clint-e-1",
+        MotherId = "mar-r",
+        BirthDate = new(1930, 5, 31),
+        PartnerIds = new List<string> { "maggie-j", "dina-e" },
+        Photo = "https://upload.wikimedia.org/wikipedia/commons/4/43/Clint_Eastwood_-_1960s_%28cropped%29.JPG"
+      },
+
+      // Actor Clint Eastwood's mom side
+      new()
+      { 
+        Id = "mar-r",
+        Gender = Gender.Female,
+        Name = "Margaret Ruth Runner",
+        BirthDate = new(1909, 1, 1),
+        DeathDate = new(2006, 1, 1),
+        FatherId = "wal-r",
+        MotherId = "vir-r",
+        PartnerIds = new List<string> { "clint-e-1" }
+      },
+      new()
+      {
+        Id = "wal-r",
+        Gender = Gender.Male,
+        Name = "Waldo Erroll Runner",
+        BirthDate = new(1882, 1, 1),
+        DeathDate = new(1956, 1, 1),
+        PartnerIds = new List<string> { "vir-r" }
+      },
+      new()
+      {
+        Id = "vir-r",
+        Gender = Gender.Female,
+        Name = "Virginia May McClanahan",
+        BirthDate = new(1886, 1, 1),
+        DeathDate = new(1967, 1, 1),
+        PartnerIds = new List<string> { "wal-r" }
+      },
+
+      // Actor Clint Eastwood's wives
+      new()
+      {
+        Id = "maggie-j",
+        Gender = Gender.Female,
+        Name = "Maggie Johnson",
+        BirthDate = new(1931, 1, 1),
+        PartnerIds = new List<string> { "clint-e-2" },
+        Photo = "https://m.media-amazon.com/images/M/MV5BMmZkM2E3MGUtYmUwYS00N2M3LWE0ZmMtM2QyNjFmNmZkMmJlXkEyXkFqcGdeQXVyMjE5MzM3MjA@._V1_.jpg"
+      },
+      new()
+      {
+        Id = "dina-e",
+        Gender = Gender.Female,
+        Name = "Dina Eastwood",
+        BirthDate = new(1965, 6, 11),
+        PartnerIds = new List<string> { "clint-e-2" },
+        Photo = "https://m.media-amazon.com/images/M/MV5BMjI2NjE0Mzk0OV5BMl5BanBnXkFtZTcwOTAxMjI4Nw@@._V1_.jpg"
+      },
+
+      // Actor Clint Eastwood's children
+      new()
+      {
+        Id = "kim-e",
+        Gender = Gender.Female,
+        Name = "Kimberly Lynn Eastwood",
+        BirthDate = new(1964, 6, 17),
+        FatherId = "clint-e-2",
+        MotherId = "maggie-j",
+        Photo = "https://miro.medium.com/v2/resize:fit:1400/0*3fiHbDMv2xiC5XNL.jpg"
+      },
+      new()
+      {
+        Id = "kyle-e",
+        Gender = Gender.Male,
+        Name = "Kyle Eastwood",
+        BirthDate = new(1968, 5, 19),
+        FatherId = "clint-e-2",
+        MotherId = "maggie-j",
+        Photo = "https://m.media-amazon.com/images/M/MV5BMTk4ODc5OTYyMF5BMl5BanBnXkFtZTYwNzUwNTk1._V1_.jpg"
+      },
+      new()
+      {
+        Id = "alison-e",
+        Gender = Gender.Female,
+        Name = "Alison Eastwood",
+        BirthDate = new(1972, 5, 22),
+        FatherId = "clint-e-2",
+        MotherId = "maggie-j",
+        Photo = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Alison_Eastwood_2012.jpg/1200px-Alison_Eastwood_2012.jpg"
+      },
+      new()
+      {
+        Id = "scott-e",
+        Gender = Gender.Male,
+        Name = "Scott Eastwood",
+        BirthDate = new(1986, 3, 21),
+        FatherId = "clint-e-2",
+        MotherId = "maggie-j",
+        Photo = "https://m.media-amazon.com/images/M/MV5BODQ4ODU5NjIxMF5BMl5BanBnXkFtZTgwNzIzNTIzNzM@._V1_.jpg"
+      },
+      new()
+      {
+        Id = "kat-e",
+        Gender = Gender.Female,
+        Name = "Kathryn Eastwood",
+        BirthDate = new(1988, 3, 2),
+        FatherId = "clint-e-2",
+        MotherId = "maggie-j",
+        Photo = "https://images.yen.com.gh/images/a81e1fd9905b6d15.jpg"
+      },
+      new()
+      {
+        Id = "fran-e",
+        Gender = Gender.Female,
+        Name = "Francesca Eastwood",
+        BirthDate = new(1993, 8, 7),
+        FatherId = "clint-e-2",
+        MotherId = "maggie-j",
+        Photo = "https://www.tvguide.com/a/img/hub/2015/09/23/4993ea77-f0b6-4754-92c9-0ea1f1a97147/tvgfrancescaeastwoodnbc.jpg"
+      },
+      new()
+      {
+        Id = "morgan-e",
+        Gender = Gender.Female,
+        Name = "Morgan Eastwood",
+        BirthDate = new(1996, 12, 12),
+        FatherId = "clint-e-2",
+        MotherId = "dina-e",
+        Photo = "https://images.squarespace-cdn.com/content/v1/6227a99697ac5f217314774b/b3227d80-8428-4ea5-ac6c-1a7cf67f7fad/IMG_2780.jpg"
+      },
+    });
+  }
+
+  private Node OnDefaultFirstNode()
+  {
+    StateHasChanged();
+    return new() { Id = "_", Gender = Gender.Male };
+  }
+
+  private Task<string> OnPhotoUpload(PhotoUploadArgs args)
+    => Task.FromResult("After the photo is uploaded, its URL should be set here.");
+
+  private async Task OnResetClick()
+  {
+    await _familyTree.ResetAsync();
+    await LoadClintEastwoodFamilyAsync();
+  }
+
+  protected override void OnInitialized()
+  {
+    _options = new(
+      Mode: "dark",
+      Template: Template.Hugo,
+      NodeBinding: new Dictionary<string, string>() 
+      { 
+        { NodeBinding.Field0, "name" },
+        { NodeBinding.Img0, "photo" },
+      },
+      NodeMenu: new() {
+        Details = new(Text: "Show details"),
+        Edit = new(Text: "Edit details"),
+        Remove = new(
+          Text: "Remove node",
+          // Although Action means "void" and the lambda is async,
+          // we can just let it run without awaiting without needing
+          // to know whether the async lambda succeeds or not
+          OnClick: new ActionCallbackInterop<string, object?>(
+            async (nodeId, _) => await _familyTree.RemoveNodeAsync(nodeId)
+          )
+        )
+      },
+      NodeTreeMenu: true,
+      EditForm: new(
+        ReadOnly: false,
+        PhotoBinding: "photo",
+        AddMore: string.Empty,
+        Buttons: new Dictionary<string, ButtonEdit?>()
+        {
+          { "pdf", null },
+          { "share", null},
+          { "remove", null}
+        },
+        Elements: new List<EditFormElement>()
+        {
+          new(Type: "date", Label: "Birth Date", Binding: "birthDate"),
+          new(Type: "date", Label: "Death Date", Binding: "deathDate"),
+          new(Type: "textbox", Label: "Photo", Binding: "photo", Btn: "Upload photo"),
+          new(Type: "textbox", Label: "Full Name", Binding: "name"),
+          new(
+            Type: "select", Label: "Gender", Binding: "gender",
+            Options: new List<Dictionary<string, string>>()
+            {
+              new() { { "value", "male" }, { "text", "Male" } },
+              new() { { "value", "female" }, { "text", "Female" } }
+            }
+          )
+        }
+      )
+    );
+  }
+}
