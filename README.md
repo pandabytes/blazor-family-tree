@@ -13,11 +13,13 @@ Install from [Nuget](https://www.nuget.org/packages/Blazor.FamilyTreeJS).
 dotnet add package Blazor.FamilyTreeJS --version <latest-version>
 ```
 
+## Depenencies
 Register `Blazor.FamilyTreeJS` dependencies.
 ```cs
 builder.Services.AddBlazorFamilyJS();
 ```
 
+## IJSRuntime configuration
 Configure `IJSRuntime`'s `JsonSerializerOptions`. This allows `System.Text.Json` to ignore `null` when
 serializing to JSON and send that JSON to Javascript. Note this affects globally.
 ```cs
@@ -26,6 +28,20 @@ var app = builder
   .ConfigureIJSRuntimeJsonOptions();
 ```
 
+## Enable C# callback interop with Javascript
+This library depends on the library `Blazor.Core` in which provides the feature to help
+serialize/deserialize C# callback to Javascript. To ensure `Blazor.FamilyTreeJS` work
+correctly, you must call `RegisterAttachReviverAsync()` from the `Blazor.Core` library.
+```cs
+var webHost = builder
+  .Build()
+  .ConfigureIJSRuntimeJsonOptions();
+
+await webHost.Services.RegisterAttachReviverAsync();
+await webHost.RunAsync();
+```
+
+## Serialize/deserialize derived types
 If you have classes/records that inhereit from classes/records in this library, then you may
 need to use the following extension method, `UseDerivedTypes<BaseType>([derive types])`.
 This allows serializing your derived classes/records with all of their properties.
