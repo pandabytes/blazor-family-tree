@@ -18,7 +18,7 @@
               OnDefaultFirstNode=@OnDefaultFirstNode
               OnPhotoUpload=@OnPhotoUpload
               AfterFamilyTreeRenderAsync=@LoadClintEastwoodFamilyAsync
-              TreeId="empty-tree-with-options"
+              TreeId="clinton-eastwood"
               Options=@_options />
 </div>
 
@@ -229,8 +229,9 @@
         Remove = new(
           Text: "Remove node",
           // Although Action means "void" and the lambda is async,
-          // we can just let it run without awaiting without needing
+          // we can just let it run without awaiting and not needing
           // to know whether the async lambda succeeds or not
+          // Unfortunately FamilyTreeJS does not use async callback.
           OnClick: new ActionCallbackInterop<string, object?>(
             async (nodeId, _) => await _familyTree.RemoveNodeAsync(nodeId)
           )
