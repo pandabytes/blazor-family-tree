@@ -146,6 +146,19 @@ public sealed partial class FamilyTree : BaseScopeComponent
     }
   }
 
+  /// <inheritdoc />
+  public override async Task SetParametersAsync(ParameterView parameters)
+  {
+    // Prevent any parameter from changing after this component
+    // has been initialized. Once we know TreeId is non-null we
+    // know for sure this component has been initialized and
+    // its parameter cannot be changed    
+    if (string.IsNullOrWhiteSpace(TreeId))
+    {
+      await base.SetParametersAsync(parameters);
+    }
+  }
+
   /// <inheritdoc/>
   protected override async ValueTask DisposeAsyncCore()
   {

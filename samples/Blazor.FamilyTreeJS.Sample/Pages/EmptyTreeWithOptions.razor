@@ -27,15 +27,14 @@
 
   private int _nodesCount = 0;
 
-  private void OnUpdateNode(UpdateNodeArgs args)
+  private Task OnUpdateNode(UpdateNodeArgs args)
   {
     _nodesCount += args.AddNodesData.Count;
     if (args.RemoveNodeId is not null)
     {
       _nodesCount -= 1;
     }
-
-    StateHasChanged();
+    return Task.CompletedTask;
   }
 
   private Node OnDefaultFirstNode()
