@@ -1,5 +1,7 @@
 @inherits TestContext
 @using Blazor.FamilyTreeJS.Components
+@using Blazor.FamilyTreeJS.Components.Interop.Events
+@using Blazor.FamilyTreeJS.Components.Interop.Options
 @using NSubstitute
 
 @code
@@ -140,5 +142,44 @@
     // Arrange
     Assert.Equal("action", callbacks[0]);
     Assert.Equal("func", callbacks[1]);
+  }
+
+  [Fact]
+  public void FamilyTree_ChangeParameters_ParametersNotChanged()
+  {
+    // Arrange
+    const string treeId = "test";
+    var cut = RenderComponent<FamilyTree>(parameters
+      => parameters.Add(p => p.TreeId, treeId)
+    );
+
+    // Act
+    var emptyNodes = (new List<Node>()).AsReadOnly();
+    var onUpdateNode = new EventCallback<UpdateNodeArgs>(
+      null,
+      () => new UpdateNodeArgs(emptyNodes, emptyNodes)
+    );
+
+    cut.SetParametersAndRender(parameters => parameters
+      .Add(p => p.TreeId, "new-" + treeId)
+      .Add(p => p.Options, new())
+      .Add(p => p.OnUpdatedNode, onUpdateNode)
+      .Add(p => p.OnPhotoUpload, args => Task.FromResult(string.Empty))
+      .Add(p => p.OnDefaultFirstNode, () => new() { Id = "id-0" })
+      .Add(p => p.Style, "width: 100px; height: 100px")
+      .Add(p => p.AfterFamilyTreeRender, () => {})
+      .Add(p => p.AfterFamilyTreeRenderAsync, () => Task.CompletedTask)
+    );
+
+    // Assert
+    var familyTree = cut.Instance;
+    Assert.Equal(treeId, familyTree.TreeId);
+    Assert.Null(familyTree.Options);
+    Assert.Equal(default(EventCallback<UpdateNodeArgs>), familyTree.OnUpdatedNode);
+    Assert.Null(familyTree.OnPhotoUpload);
+    Assert.Null(familyTree.OnDefaultFirstNode);
+    Assert.Empty(familyTree.Style);
+    Assert.Null(familyTree.AfterFamilyTreeRender);
+    Assert.Null(familyTree.AfterFamilyTreeRenderAsync);
   }
 }
