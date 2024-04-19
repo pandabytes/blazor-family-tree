@@ -71,14 +71,14 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
   public async Task RegisterOnUpdateNodeCallbackAsync(string treeId, EventCallback<UpdateNodeArgs> handler)
   {
     var callbackInterop = new EventCallbackInterop<UpdateNodeArgs>(handler);
-    _callbackInterops.Add(callbackInterop);
+    CallbackInterops.Add(callbackInterop);
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerUpdateNodeHandler", treeId, callbackInterop);    
   }
 
   public async Task RegisterDefaultFirstNodeHandlerAsync(string treeId, Func<Node> handler)
   {
     var callbackInterop = new FuncCallbackInterop<Node>(handler);
-    _callbackInterops.Add(callbackInterop);
+    CallbackInterops.Add(callbackInterop);
 
     var functionId = $"{FamilyTreeJsInteropModule}.registerDefaultFirstNodeHandler";
     await Module.InvokeVoidAsync(functionId, treeId, callbackInterop);  
@@ -87,7 +87,7 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
   public async Task RegisterOnPhotoUploadCallbackAsync(string treeId, Func<PhotoUploadArgs, Task<string>> handler)
   {
     var callbackInterop = new FuncCallbackInterop<PhotoUploadArgs, Task<string>>(handler);
-    _callbackInterops.Add(callbackInterop);
+    CallbackInterops.Add(callbackInterop);
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerPhotoUploadHandler", treeId, callbackInterop);
   }
 
@@ -109,11 +109,11 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
     // disposing them in DisposeAsyncCore because the client owns those callbacks
     // and we don't want to dispose them when DestroyTreeAsync is called.
     // Calling DestroyTreeAsync() does not mean we release all resources.
-    foreach (var callbackInterop in _callbackInterops)
+    foreach (var callbackInterop in CallbackInterops)
     {
       callbackInterop.Dispose();
     }
-    _callbackInterops.Clear();
+    CallbackInterops.Clear();
   }
 
   /// <inheritdoc />
