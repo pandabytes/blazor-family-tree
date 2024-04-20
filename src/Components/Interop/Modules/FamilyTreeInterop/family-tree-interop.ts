@@ -71,6 +71,11 @@ class FamilyTreeJsInterop {
     this.getFamilyTree(treeId).replaceIds(oldNewIdMappings);
   }
 
+  /**
+   * See https://github.com/BALKANGraph/FamilyTreeJS/issues/97
+   * @param treeId 
+   * @param handler 
+   */
   public registerDefaultFirstNodeHandler(treeId: string, handler: () => Object) {
     const familyTree = this.getFamilyTree(treeId);
 
@@ -79,10 +84,24 @@ class FamilyTreeJsInterop {
     // cast it to "any"
     const familyTreeObj = familyTree as any;
 
-    familyTreeObj.on('add', (_sender: FamilyTree, _args: any) => {
-      const node = handler();
-      familyTree.addNode(node, undefined, false);
-      return false;
+    // This callback is called whenever ".addNode({...}, undefined, true)" is called
+    // Since we only want to override the default node, we have to check
+    // if the family tree is empty AND the node being added is the node
+    // provided by the FamilyTreeJS library
+    familyTreeObj.on('add', (sender: FamilyTree, arg1: any, _arg2: any, _arg3: any) => {
+      if (FamilyTreeJsInterop.isFamilyTreeEmpty(sender) &&
+          FamilyTreeJsInterop.isFirstDefaultNode(arg1)) {
+        const node = handler();
+
+        // Don't fire add event again because we'll be
+        // stuck in recursive call forever
+        sender.addNode(node, undefined, false);
+  
+        // Return false to cancel the default first node add
+        // If we don't, it will add its default node in addition
+        // to our custom default node
+        return false;
+      }
     });
   }
 
@@ -94,7 +113,7 @@ class FamilyTreeJsInterop {
   public registerPhotoUploadHandler(treeId: string, photoUploadHandler: (args: PhotoUploadArgs) => Promise<string>) {
     const familyTree = this.getFamilyTree(treeId);
 
-    familyTree.editUI.on("element-btn-click", (_sender, _args) => {     
+    familyTree.editUI.on("element-btn-click", (_sender, _args) => {
       FamilyTree.fileUploadDialog(function (file: File) {
         FamilyTreeJsInterop.uploadPhotoAsync(familyTree, file, photoUploadHandler);
       })
@@ -163,6 +182,23 @@ class FamilyTreeJsInterop {
         return htmlElement;
       }
     }
+  }
+
+  private static isFamilyTreeEmpty(familyTree: FamilyTree): boolean {
+    const nodes = familyTree.nodes;
+    return !nodes || Object.keys(nodes).length === 0;
+  }
+
+  private static isFirstDefaultNode(node: Object): boolean {
+    const keys = Object.keys(node);
+
+    // The default first node of FamilyTreeJs has this structure
+    // { id: '_wasf' } where id is an auto-generated id
+    if (keys.length === 1 && keys[0] === 'id') {
+      const nodeId = node['id'];
+      return typeof nodeId === 'string' && nodeId.startsWith('_');
+    }
+    return false;
   }
 }
 
