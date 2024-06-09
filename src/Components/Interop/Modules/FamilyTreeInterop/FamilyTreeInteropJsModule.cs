@@ -1,6 +1,6 @@
 namespace Blazor.FamilyTreeJS.Components.Interop.Modules.FamilyTreeInterop;
 
-internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNode : Node
+internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNode : BaseNode
 {
   private const string FamilyTreeJsInteropModule = "FamilyTreeJsInteropObj";
 
