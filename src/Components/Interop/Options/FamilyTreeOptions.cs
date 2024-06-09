@@ -14,15 +14,15 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 /// specified in this record, will be automatically disposed when
 /// their associated <see cref="FamilyTree"/> component is disposed.
 /// </remarks>
-public record FamilyTreeOptions(
+public record FamilyTreeOptions<TNode>(
   string Mode = "light",
   bool? EnableSearch = null,
   bool? EnablePan = null,
   bool? MiniMap = null,
   string? Template = null,
   NodeMenu? NodeMenu = null,
-  IReadOnlyList<Node>? Nodes = null,
+  IReadOnlyList<TNode>? Nodes = null,
   IReadOnlyDictionary<string, string>? NodeBinding = null,
   EditForm? EditForm = null,
   bool? NodeTreeMenu = null
-);
+) where TNode : Node;

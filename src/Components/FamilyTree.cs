@@ -6,7 +6,7 @@ namespace Blazor.FamilyTreeJS.Components;
 public partial class FamilyTree<TNode> : BaseScopeComponent where TNode : Node
 {
   [InjectScope, AutoImportJsModule]
-  private protected readonly FamilyTreeInteropJsModule _familyTreeJsInterop = null!;
+  private protected readonly FamilyTreeInteropJsModule<TNode> _familyTreeJsInterop = null!;
 
   /// <summary>
   /// Specify the id of the tree.
@@ -18,7 +18,7 @@ public partial class FamilyTree<TNode> : BaseScopeComponent where TNode : Node
   /// Options to configure and/or initialize the family tree.
   /// </summary>
   [Parameter]
-  public FamilyTreeOptions? Options { get; init; }
+  public FamilyTreeOptions<TNode>? Options { get; init; }
 
   /// <summary>
   /// Event that gets fired when a node is added, updated, and/or removed.
@@ -48,7 +48,7 @@ public partial class FamilyTree<TNode> : BaseScopeComponent where TNode : Node
   /// called. You would need to call this yourself in your delegate.
   /// </summary>
   [Parameter]
-  public Func<Node>? OnDefaultFirstNode { get; init; }
+  public Func<TNode>? OnDefaultFirstNode { get; init; }
 
   /// <summary>
   /// Custom style for the family tree.
@@ -87,7 +87,7 @@ public partial class FamilyTree<TNode> : BaseScopeComponent where TNode : Node
   /// the nodes at a later time.
   /// </summary>
   /// <param name="nodes">Nodes to be loaded.</param>
-  public async Task LoadNodesAsync(IEnumerable<Node> nodes)
+  public async Task LoadNodesAsync(IEnumerable<TNode> nodes)
     => await _familyTreeJsInterop.LoadNodesAsync(TreeIdForInterop, nodes);
 
   /// <summary>
