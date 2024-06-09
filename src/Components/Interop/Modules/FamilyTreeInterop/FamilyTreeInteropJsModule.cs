@@ -77,7 +77,6 @@ internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNod
 
   public async Task RegisterDefaultFirstNodeHandlerAsync(string treeId, Func<TNode> handler)
   {
-    System.Console.WriteLine("registering default");
     var callbackInterop = new FuncCallbackInterop<TNode>(handler);
     CallbackInterops.Add(callbackInterop);
 
