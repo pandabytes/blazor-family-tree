@@ -5,6 +5,10 @@ namespace Blazor.FamilyTreeJS.Components;
 /// Although it is public, this class is not meant
 /// to be extended by classes from external assemblies.
 /// </summary>
+/// <typeparam name="TNode">
+/// The type of the nodes that are
+/// stored in this fanmily tree.
+/// </typeparam>
 public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where TNode : Node
 {
   /// <summary>
