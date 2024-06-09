@@ -29,4 +29,4 @@ public record FamilyTreeOptions<TNode>(
   IReadOnlyDictionary<string, string>? NodeBinding = null,
   EditForm? EditForm = null,
   bool? NodeTreeMenu = null
-) where TNode : Node;
+) where TNode : BaseNode;

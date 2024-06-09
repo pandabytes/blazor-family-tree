@@ -9,7 +9,7 @@ namespace Blazor.FamilyTreeJS.Components;
 /// The type of the nodes that are
 /// stored in this fanmily tree.
 /// </typeparam>
-public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where TNode : Node
+public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where TNode : BaseNode
 {
   /// <summary>
   /// Allow this field to be inherited only within this assembly.

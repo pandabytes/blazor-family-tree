@@ -3,25 +3,13 @@ using System.Text.Json.Serialization;
 namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 
 /// <summary>
-/// Node or person in the family tree. This is the
-/// basic unit of the family tree. Each node/person
-/// in the family tree is a <see cref="Node"/> object.
+/// Derived from <see cref="BaseNode"/> to include
+/// additional properties like Name, Photo, BirthDate
+/// and DeathDate.
 /// </summary>
-public record Node
+public record Node : BaseNode
 {
   private string _name = string.Empty;
-
-  /// <summary>
-  /// Id of the node. Need to be unique within
-  /// a family tree.
-  /// </summary>
-  public required string Id { get; init; }
-
-  /// <summary>
-  /// Gender of the node.
-  /// </summary>
-  [JsonConverter(typeof(GenderConverter))]
-  public Gender? Gender { get; init; }
 
   /// <summary>
   /// Name of the node which is the concatenation
@@ -71,29 +59,6 @@ public record Node
       }
     }
   }
-
-  /// <summary>
-  /// List of partner ids. A node
-  /// can have more than one partner such as
-  /// ex-husband/ex-wife.
-  /// See https://balkan.app/FamilyTreeJS/API/interfaces/FamilyTree.options#nodes-1
-  /// </summary>
-  [JsonPropertyName("pids")]
-  public IReadOnlyList<string>? PartnerIds { get; init; }
-
-  /// <summary>
-  /// Father id of this node. This id belongs
-  /// to another <see cref="Node"/> object.
-  /// </summary>
-  [JsonPropertyName("fid")]
-  public string? FatherId { get; init; }
-
-  /// <summary>
-  /// Mother id of this node. This id belongs
-  /// to another <see cref="Node"/> object.
-  /// </summary>
-  [JsonPropertyName("mid")]
-  public string? MotherId { get; init; }
 
   /// <summary>
   /// First name of this node.
