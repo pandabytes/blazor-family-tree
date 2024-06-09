@@ -3,10 +3,10 @@ namespace Blazor.FamilyTreeJS.Components;
 /// <summary>
 /// FamilyTreeJS component.
 /// </summary>
-public sealed partial class FamilyTree : BaseScopeComponent
+public partial class FamilyTree<TNode> : BaseScopeComponent where TNode : Node
 {
   [InjectScope, AutoImportJsModule]
-  private readonly FamilyTreeInteropJsModule _familyTreeJsInterop = null!;
+  private protected readonly FamilyTreeInteropJsModule _familyTreeJsInterop = null!;
 
   /// <summary>
   /// Specify the id of the tree.

@@ -11,7 +11,7 @@
 <p>Number of nodes in family tree: @_nodesCount</p>
 
 <div style="margin-left: 5rem; margin-right: 5rem;">
-  <FamilyTree @ref=@_familyTree
+  <DefaultFamilyTree @ref=@_familyTree
               OnUpdatedNode=@OnUpdateNode
               OnDefaultFirstNode=@OnDefaultFirstNode
               OnPhotoUpload=@OnPhotoUpload
@@ -23,7 +23,7 @@
 {
   private FamilyTreeOptions _options = null!;
 
-  private FamilyTree _familyTree = null!;
+  private DefaultFamilyTree _familyTree = null!;
 
   private int _nodesCount = 0;
 

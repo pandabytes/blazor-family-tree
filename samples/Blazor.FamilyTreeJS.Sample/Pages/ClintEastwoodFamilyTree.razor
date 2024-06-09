@@ -14,7 +14,7 @@
 </button>
 
 <div style="margin-left: 5rem; margin-right: 5rem;">
-  <FamilyTree @ref=@_familyTree
+  <DefaultFamilyTree @ref=@_familyTree
               OnDefaultFirstNode=@OnDefaultFirstNode
               OnPhotoUpload=@OnPhotoUpload
               AfterFamilyTreeRenderAsync=@LoadClintEastwoodFamilyAsync
@@ -26,7 +26,7 @@
 {
   private FamilyTreeOptions _options = null!;
 
-  private FamilyTree _familyTree = null!;
+  private DefaultFamilyTree _familyTree = null!;
 
   private async Task LoadClintEastwoodFamilyAsync()
   {
