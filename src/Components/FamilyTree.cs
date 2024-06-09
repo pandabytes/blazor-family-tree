@@ -24,7 +24,7 @@ public partial class FamilyTree<TNode> : BaseScopeComponent where TNode : Node
   /// Event that gets fired when a node is added, updated, and/or removed.
   /// </summary>
   [Parameter]
-  public EventCallback<UpdateNodeArgs> OnUpdatedNode { get; init; }
+  public EventCallback<UpdateNodeArgs<TNode>> OnUpdatedNode { get; init; }
 
   /// <summary>
   /// Event that gets fired when a user uploads a person's photo.

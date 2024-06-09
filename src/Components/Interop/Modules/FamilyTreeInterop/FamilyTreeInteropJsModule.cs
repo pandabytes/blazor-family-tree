@@ -68,9 +68,10 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
   public async Task ReplaceNodeIdsAsync(string treeId, IDictionary<string, string> oldNewIdMappings)
     => await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.replaceNodeIds", treeId, oldNewIdMappings);
 
-  public async Task RegisterOnUpdateNodeCallbackAsync(string treeId, EventCallback<UpdateNodeArgs> handler)
+  public async Task RegisterOnUpdateNodeCallbackAsync<TNode>(string treeId, EventCallback<UpdateNodeArgs<TNode>> handler)
+    where TNode : Node
   {
-    var callbackInterop = new EventCallbackInterop<UpdateNodeArgs>(handler);
+    var callbackInterop = new EventCallbackInterop<UpdateNodeArgs<TNode>>(handler);
     CallbackInterops.Add(callbackInterop);
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerUpdateNodeHandler", treeId, callbackInterop);    
   }

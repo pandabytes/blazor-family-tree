@@ -27,7 +27,7 @@
 
   private int _nodesCount = 0;
 
-  private Task OnUpdateNode(UpdateNodeArgs args)
+  private Task OnUpdateNode(UpdateNodeArgs<Node> args)
   {
     _nodesCount += args.AddNodesData.Count;
     if (args.RemoveNodeId is not null)

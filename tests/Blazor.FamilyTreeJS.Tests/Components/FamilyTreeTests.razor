@@ -54,7 +54,7 @@
   [Fact]
   public void FamilyTree_EmptyTreeId_ThrowsException()
   {
-    Assert.Throws<ArgumentException>(() => Render(@<FamilyTree TreeId=@string.Empty />));
+    Assert.Throws<ArgumentException>(() => Render(@<DefaultFamilyTree TreeId=@string.Empty />));
     _shouldDispose = false;
   }
 
@@ -66,7 +66,7 @@
     const string treeId = "test";
 
     // Act
-    var cut = Render(@<FamilyTree TreeId=@treeId Style=@style />);
+    var cut = Render(@<DefaultFamilyTree TreeId=@treeId Style=@style />);
 
     // Assert
     var div = cut.Find("div");
@@ -93,7 +93,7 @@
       .SetResult(true);
 
     // Act & Assert
-    Assert.Throws<ArgumentException>(() => Render(@<FamilyTree TreeId=@treeId />));
+    Assert.Throws<ArgumentException>(() => Render(@<DefaultFamilyTree TreeId=@treeId />));
   }
 
   [Fact]
@@ -103,7 +103,7 @@
     var actionSub = Substitute.For<Action>();
 
     // Act
-    var cut = Render(@<FamilyTree TreeId="test" AfterFamilyTreeRender=@actionSub />);
+    var cut = Render(@<DefaultFamilyTree TreeId="test" AfterFamilyTreeRender=@actionSub />);
 
     // Arrange
     actionSub.ReceivedWithAnyArgs().Invoke();
@@ -116,7 +116,7 @@
     var funcSub = Substitute.For<Func<Task>>();
 
     // Act
-    var cut = Render(@<FamilyTree TreeId="test" AfterFamilyTreeRenderAsync=@funcSub />);
+    var cut = Render(@<DefaultFamilyTree TreeId="test" AfterFamilyTreeRenderAsync=@funcSub />);
 
     // Arrange
     funcSub.ReceivedWithAnyArgs().Invoke();
@@ -135,7 +135,7 @@
     };
 
     // Act
-    var cut = Render(@<FamilyTree TreeId="test" 
+    var cut = Render(@<DefaultFamilyTree TreeId="test" 
                                   AfterFamilyTreeRender=@actionSub
                                   AfterFamilyTreeRenderAsync=@funcSub />);
 
@@ -149,15 +149,15 @@
   {
     // Arrange
     const string treeId = "test";
-    var cut = RenderComponent<FamilyTree>(parameters
+    var cut = RenderComponent<DefaultFamilyTree>(parameters
       => parameters.Add(p => p.TreeId, treeId)
     );
 
     // Act
     var emptyNodes = (new List<Node>()).AsReadOnly();
-    var onUpdateNode = new EventCallback<UpdateNodeArgs>(
+    var onUpdateNode = new EventCallback<UpdateNodeArgs<Node>>(
       null,
-      () => new UpdateNodeArgs(emptyNodes, emptyNodes)
+      () => new UpdateNodeArgs<Node>(emptyNodes, emptyNodes)
     );
 
     cut.SetParametersAndRender(parameters => parameters
@@ -175,7 +175,7 @@
     var familyTree = cut.Instance;
     Assert.Equal(treeId, familyTree.TreeId);
     Assert.Null(familyTree.Options);
-    Assert.Equal(default(EventCallback<UpdateNodeArgs>), familyTree.OnUpdatedNode);
+    Assert.Equal(default(EventCallback<UpdateNodeArgs<Node>>), familyTree.OnUpdatedNode);
     Assert.Null(familyTree.OnPhotoUpload);
     Assert.Null(familyTree.OnDefaultFirstNode);
     Assert.Empty(familyTree.Style);
