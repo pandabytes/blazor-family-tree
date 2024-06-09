@@ -9,12 +9,12 @@
 </button>
 
 <div style="border: solid black 4px; margin-left: 5rem; margin-right: 5rem;">
-  <FamilyTree @ref=@_familyTree TreeId="empty"/>
+  <DefaultFamilyTree @ref=@_familyTree TreeId="empty"/>
 </div>
 
 @code
 {
-  private FamilyTree _familyTree = null!;
+  private DefaultFamilyTree _familyTree = null!;
 
   private async Task OnResetClick() => await _familyTree.ResetAsync();
 }

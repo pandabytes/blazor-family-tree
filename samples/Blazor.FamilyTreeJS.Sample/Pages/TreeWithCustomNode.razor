@@ -1,8 +1,8 @@
-﻿@page "/empty-tree-with-options"
+﻿@page "/tree-with-custom-node"
 
-<PageTitle>Tree Options</PageTitle>
+<PageTitle>Tree with Custom Node</PageTitle>
 
-<h1>Empty Tree with Options</h1>
+<h1>Tree with Custom Node</h1>
 
 <button class="btn btn-primary" style="margin-bottom: 0.5rem;" @onclick=@OnResetClick>
   Reset
@@ -11,23 +11,29 @@
 <p>Number of nodes in family tree: @_nodesCount</p>
 
 <div style="margin-left: 5rem; margin-right: 5rem;">
-  <DefaultFamilyTree @ref=@_familyTree
-                     OnUpdatedNode=@OnUpdateNode
-                     OnDefaultFirstNode=@OnDefaultFirstNode
-                     OnPhotoUpload=@OnPhotoUpload
-                     TreeId="empty-tree-with-options"
-                     Options=@_options />
+  <FamilyTree @ref=@_familyTree
+              TNode="CustomNode"
+              OnUpdatedNode=@OnUpdateNode
+              OnDefaultFirstNode=@OnDefaultFirstNode
+              OnPhotoUpload=@OnPhotoUpload
+              TreeId="tree-with-custom-node"
+              Options=@_options />
 </div>
 
 @code
 {
-  private FamilyTreeOptions<Node> _options = null!;
+  private record CustomNode : Node
+  {
+    public string Title { get; init; } = string.Empty;
+  }
 
-  private DefaultFamilyTree _familyTree = null!;
+  private FamilyTreeOptions<CustomNode> _options = null!;
 
-  private int _nodesCount = 0;
+  private FamilyTree<CustomNode> _familyTree = null!;
 
-  private Task OnUpdateNode(UpdateNodeArgs<Node> args)
+  private int _nodesCount = 1;
+
+  private Task OnUpdateNode(UpdateNodeArgs<CustomNode> args)
   {
     _nodesCount += args.AddNodesData.Count;
     if (args.RemoveNodeId is not null)
@@ -37,11 +43,11 @@
     return Task.CompletedTask;
   }
 
-  private Node OnDefaultFirstNode()
+  private CustomNode OnDefaultFirstNode()
   {
     _nodesCount += 1;
     StateHasChanged();
-    return new() { Id = "_", Gender = Gender.Male };
+    return new() { Id = "_", Gender = Gender.Male, Title = "Accountant" };
   }
 
   private Task<string> OnPhotoUpload(PhotoUploadArgs args)
@@ -61,7 +67,12 @@
       NodeBinding: new Dictionary<string, string>() 
       { 
         { NodeBinding.Field0, "name" },
+        { NodeBinding.Field1, "title" },
         { NodeBinding.Img0, "photo" },
+      },
+      Nodes: new List<CustomNode>
+      { 
+        new() { Id = "123", Gender = Gender.Male, Name = "Jack Smith", Title = "Senior Consultant"}
       },
       NodeMenu: new() {
         Details = new(Text: "Show details"),
@@ -93,6 +104,7 @@
           new(Type: "date", Label: "Death Date", Binding: "deathDate"),
           new(Type: "textbox", Label: "Photo", Binding: "photo", Btn: "Upload photo"),
           new(Type: "textbox", Label: "Full Name", Binding: "name"),
+          new(Type: "textbox", Label: "Title", Binding: "title"),
           new(
             Type: "select", Label: "Gender", Binding: "gender",
             Options: new List<Dictionary<string, string>>()

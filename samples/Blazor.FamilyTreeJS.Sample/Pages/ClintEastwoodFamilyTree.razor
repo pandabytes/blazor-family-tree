@@ -14,19 +14,18 @@
 </button>
 
 <div style="margin-left: 5rem; margin-right: 5rem;">
-  <FamilyTree @ref=@_familyTree
-              OnDefaultFirstNode=@OnDefaultFirstNode
-              OnPhotoUpload=@OnPhotoUpload
-              AfterFamilyTreeRenderAsync=@LoadClintEastwoodFamilyAsync
-              TreeId="clinton-eastwood"
-              Options=@_options />
+  <DefaultFamilyTree @ref=@_familyTree
+                     OnPhotoUpload=@OnPhotoUpload
+                     AfterFamilyTreeRenderAsync=@LoadClintEastwoodFamilyAsync
+                     TreeId="clinton-eastwood"
+                     Options=@_options />
 </div>
 
 @code
 {
-  private FamilyTreeOptions _options = null!;
+  private FamilyTreeOptions<Node> _options = null!;
 
-  private FamilyTree _familyTree = null!;
+  private DefaultFamilyTree _familyTree = null!;
 
   private async Task LoadClintEastwoodFamilyAsync()
   {
@@ -196,12 +195,6 @@
         Photo = "https://images.squarespace-cdn.com/content/v1/6227a99697ac5f217314774b/b3227d80-8428-4ea5-ac6c-1a7cf67f7fad/IMG_2780.jpg"
       },
     });
-  }
-
-  private Node OnDefaultFirstNode()
-  {
-    StateHasChanged();
-    return new() { Id = "_", Gender = Gender.Male };
   }
 
   private Task<string> OnPhotoUpload(PhotoUploadArgs args)

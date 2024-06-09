@@ -18,7 +18,7 @@ public static class DependencyInjection
   public static IServiceCollection AddBlazorFamilyJS(this IServiceCollection services)
   {
     return services
-      .AddScoped<FamilyTreeInteropJsModule>()
+      .AddScoped(typeof(FamilyTreeInteropJsModule<>))
       .AddTransient<ObjectTraversal>();
   }
 

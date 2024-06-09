@@ -12,17 +12,21 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 /// make it easy for client to use, all objects of type
 /// <see cref="BaseCallbackInterop"/> (and its the derived types)
 /// specified in this record, will be automatically disposed when
-/// their associated <see cref="FamilyTree"/> component is disposed.
+/// their associated <see cref="FamilyTree{TNode}"/> component is disposed.
 /// </remarks>
-public record FamilyTreeOptions(
+/// <typeparam name="TNode">
+/// The type of the nodes that are
+/// stored in this fanmily tree options object.
+/// </typeparam>
+public record FamilyTreeOptions<TNode>(
   string Mode = "light",
   bool? EnableSearch = null,
   bool? EnablePan = null,
   bool? MiniMap = null,
   string? Template = null,
   NodeMenu? NodeMenu = null,
-  IReadOnlyList<Node>? Nodes = null,
+  IReadOnlyList<TNode>? Nodes = null,
   IReadOnlyDictionary<string, string>? NodeBinding = null,
   EditForm? EditForm = null,
   bool? NodeTreeMenu = null
-);
+) where TNode : Node;

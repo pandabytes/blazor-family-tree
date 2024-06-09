@@ -1,6 +1,6 @@
 namespace Blazor.FamilyTreeJS.Components.Interop.Modules.FamilyTreeInterop;
 
-internal sealed class FamilyTreeInteropJsModule : BaseJsModule
+internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNode : Node
 {
   private const string FamilyTreeJsInteropModule = "FamilyTreeJsInteropObj";
 
@@ -35,7 +35,7 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
   public async Task<bool> TreeExistAsync(string treeId)
     => await Module.InvokeAsync<bool>($"{FamilyTreeJsInteropModule}.treeExist", treeId);
 
-  public async Task SetupFamilyTreeAsync(string treeId, FamilyTreeOptions? options = null)
+  public async Task SetupFamilyTreeAsync(string treeId, FamilyTreeOptions<TNode>? options = null)
   {
     if (options is null)
     {
@@ -59,7 +59,7 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
     }
   }
 
-  public async Task LoadNodesAsync(string treeId, IEnumerable<Node> nodes)
+  public async Task LoadNodesAsync(string treeId, IEnumerable<TNode> nodes)
     => await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.loadNodes", treeId, nodes);
 
   public async Task<bool> RemoveNodeAsync(string treeId, string nodeId)
@@ -68,16 +68,16 @@ internal sealed class FamilyTreeInteropJsModule : BaseJsModule
   public async Task ReplaceNodeIdsAsync(string treeId, IDictionary<string, string> oldNewIdMappings)
     => await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.replaceNodeIds", treeId, oldNewIdMappings);
 
-  public async Task RegisterOnUpdateNodeCallbackAsync(string treeId, EventCallback<UpdateNodeArgs> handler)
+  public async Task RegisterOnUpdateNodeCallbackAsync(string treeId, EventCallback<UpdateNodeArgs<TNode>> handler)
   {
-    var callbackInterop = new EventCallbackInterop<UpdateNodeArgs>(handler);
+    var callbackInterop = new EventCallbackInterop<UpdateNodeArgs<TNode>>(handler);
     CallbackInterops.Add(callbackInterop);
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerUpdateNodeHandler", treeId, callbackInterop);    
   }
 
-  public async Task RegisterDefaultFirstNodeHandlerAsync(string treeId, Func<Node> handler)
+  public async Task RegisterDefaultFirstNodeHandlerAsync(string treeId, Func<TNode> handler)
   {
-    var callbackInterop = new FuncCallbackInterop<Node>(handler);
+    var callbackInterop = new FuncCallbackInterop<TNode>(handler);
     CallbackInterops.Add(callbackInterop);
 
     var functionId = $"{FamilyTreeJsInteropModule}.registerDefaultFirstNodeHandler";

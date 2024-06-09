@@ -8,8 +8,8 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Events;
 /// <param name="RemoveNodeId">
 /// This can be null but the Typescript definition states that its type is "string | number".
 /// </param>
-public record UpdateNodeArgs(
-  IReadOnlyList<Node> AddNodesData,
-  IReadOnlyList<Node> UpdateNodesData,
+public record UpdateNodeArgs<TNode>(
+  IReadOnlyList<TNode> AddNodesData,
+  IReadOnlyList<TNode> UpdateNodesData,
   string? RemoveNodeId = null
-);
+) where TNode : Node;
