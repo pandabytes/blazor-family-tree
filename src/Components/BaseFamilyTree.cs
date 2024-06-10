@@ -182,11 +182,7 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
     await base.DisposeAsyncCore();
   }
 
-  /// <summary>
-  /// Set up the family tree.
-  /// </summary>
-  /// <returns></returns>
-  protected async Task SetupFamilyTreeAsync()
+  private protected async Task SetupFamilyTreeAsync()
   {
     var exist = await _familyTreeJsInterop.TreeExistAsync(TreeIdForInterop);
     if (exist)

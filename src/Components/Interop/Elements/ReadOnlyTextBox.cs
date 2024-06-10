@@ -14,14 +14,19 @@ public static class ReadOnlyTextBox
   public static readonly string Type = "readOnlyTextBox";
 
   /// <summary>
-  /// 
+  /// Callback that will return a HTML string that describes
+  /// the input to FamilyTreeJS. For more details on the parameter
+  /// please see <see cref="InputElementCallback{TNode}"/>.
   /// </summary>
-  /// <param name="data"></param>
-  /// <param name="editElement"></param>
-  /// <param name="minWidth"></param>
-  /// <param name="readOnly"></param>
-  /// <typeparam name="TNode"></typeparam>
-  /// <returns></returns>
+  /// <param name="data">Node data.</param>
+  /// <param name="editElement">Edit element object.</param>
+  /// <param name="minWidth">Minimum width.</param>
+  /// <param name="readOnly">Readonly.</param>
+  /// <typeparam name="TNode">
+  /// The type of the nodes that are
+  /// stored in this fanmily tree.
+  /// </typeparam>
+  /// <returns>Result for FamilyTreeJS to use.</returns>
   public static InputElementResult Callback<TNode>(
     TNode data, EditFormElement editElement,
     string minWidth, bool? readOnly
@@ -38,11 +43,14 @@ public static class ReadOnlyTextBox
     var nodeId = data.Id;
     var value = data.Get<object?>(editElement.Binding.ToFirstCharUpper());
 
+    // Input has no value so simply exit early
     if ((readOnly ?? false) && value is null)
     {
       return emptyResult;
     }
 
+    // Whether it is readonly or not, for this input
+    // type we always want to make it readonly
     var html = (readOnly ?? false) ? @$"
       <div class=""bft-input"" data-bft-input="""" data-bft-input-disabled="""">
         <label for=""{nodeId}"" class=""hasval"">{editElement.Label}</label>
