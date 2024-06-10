@@ -10,14 +10,15 @@ public static class BaseNodeExtension
   /// </summary>
   /// <param name="node">Node object.</param>
   /// <param name="propertyName">Name of the property.</param>
-  /// <typeparam name="T">Type of the property value</typeparam>
+  /// <typeparam name="T">Type of the property value.</typeparam>
   /// <returns>Property value.</returns>
   public static T Get<T>(this BaseNode node, string propertyName)
   {
     var type = node.GetType();
-    var property = type.GetProperty(propertyName);
-    var value = (property?.GetValue(node)) ??
+    var property = type.GetProperty(propertyName) ??
       throw new ArgumentException($"Failed to get value of property \"{propertyName}\".");
-    return (T)value;
+
+    var value = property.GetValue(node);
+    return (T)value!;
   }
 }

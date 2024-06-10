@@ -6,6 +6,7 @@
 <h1>Tree with Custom Input Element</h1>
 
 <p>The field <b>Title</b> is readonly.</p>
+<p>The field <b>Photo</b> is readonly but it can only be changed by uploading a photo.</p>
 
 <button class="btn btn-primary" style="margin-bottom: 0.5rem;" @onclick=@OnResetClick>
   Reset
@@ -54,7 +55,7 @@
   }
 
   private Task<string> OnPhotoUpload(PhotoUploadArgs args)
-    => Task.FromResult("After the photo is uploaded, its URL should be set here.");
+    => Task.FromResult("https://as2.ftcdn.net/v2/jpg/02/11/42/93/1000_F_211429396_N30pkrd7EfFgQ7DJUZUbRDumqYCn3LKG.jpg");
 
   private async Task OnResetClick()
   {
@@ -107,7 +108,7 @@
           {
             new(Type: "date", Label: "Birth Date", Binding: "birthDate"),
             new(Type: "date", Label: "Death Date", Binding: "deathDate"),
-            new(Type: "textbox", Label: "Photo", Binding: "photo", Btn: "Upload photo"),
+            new(Type: ReadOnlyPhotoUpload.Type, Label: "Photo", Binding: "photo", Btn: "Upload photo"),
             new(Type: "textbox", Label: "Full Name", Binding: "name"),
             new(Type: ReadOnlyTextBox.Type, Label: "Title", Binding: "title"),
             new(
@@ -124,7 +125,8 @@
       NonFamilyTreeOptions: new(
         CustomInputElements: new Dictionary<string, InputElementCallback<CustomNode>>
         {
-          { ReadOnlyTextBox.Type, ReadOnlyTextBox.Callback<CustomNode> }
+          { ReadOnlyTextBox.Type, ReadOnlyTextBox.Callback<CustomNode> },
+          { ReadOnlyPhotoUpload.Type, ReadOnlyPhotoUpload.Callback<CustomNode> }
         }
       )
     );

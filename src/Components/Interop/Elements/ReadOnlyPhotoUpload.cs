@@ -1,17 +1,17 @@
 namespace Blazor.FamilyTreeJS.Components.Interop.Elements;
 
 /// <summary>
-/// A custom readonly textbox input element.
+/// A custom readonly photo upload textbox input element.
 /// </summary>
 /// <remarks>
 /// Based off of https://github.com/BALKANGraph/FamilyTreeJS/issues/119#issuecomment-2155809675.
 /// </remarks>
-public static class ReadOnlyTextBox
+public static class ReadOnlyPhotoUpload
 {
   /// <summary>
-  /// Type of the the readonly text box.
+  /// Type of the the readonly photo upload.
   /// </summary>
-  public static readonly string Type = "readOnlyTextBox";
+  public static readonly string Type = "readonlyPhotoUpload";
 
   /// <summary>
   /// Callback that will return a HTML string that describes
@@ -57,32 +57,22 @@ public static class ReadOnlyTextBox
 
     // Whether it is readonly or not, for this input
     // type we always want to make it readonly
-    var html = localReadOnly ? @$"
-      <div class=""bft-input"" data-bft-input="""" data-bft-input-disabled="""">
-        <label for=""{nodeId}"" class=""hasval"">{editElement.Label}</label>
-        <input readonly
-               data-binding=""{editElement.Binding}""
-               maxlength=""256""
-               id=""{nodeId}""
-               name=""{nodeId}""
-               type=""text"" value=""{value}"" autocomplete=""off"">
-      </div>
-    " : @$"
+    var html = localReadOnly ? string.Empty : $@"
       <div class=""bft-form-field"" style=""min-width: {minWidth};"">
-        <div class=""bft-input"" data-bft-input="""">
-          <label for=""{nodeId}"" class=""hasval"">{editElement.Label}</label>
-          <input readonly
-                 disabled
-                 data-binding=""{editElement.Binding}""
-                 maxlength=""256""
-                 id=""{nodeId}""
-                 name=""{nodeId}""
-                 type=""text""
-                 value=""{value}""
-                 autocomplete=""off"">
-        </div>
-      </div>
-    ";
+          <div class=""bft-input"" data-bft-input="""">
+              <label for=""{nodeId}"" class="""">{editElement.Label}</label>
+              <input readonly
+                     disabled  
+                     data-binding=""{editElement.Binding}""
+                     maxlength=""256""
+                     id=""{nodeId}""
+                     name=""{nodeId}""
+                     value=""{value}""
+                     type=""text""
+                     autocomplete=""off"">
+              <a href=""#"" data-input-btn="""" class=""bft-link bft-link-bft-button"">{editElement.Btn}</a>
+          </div>
+      </div>";
 
     return new(html, nodeId, value);
   }
