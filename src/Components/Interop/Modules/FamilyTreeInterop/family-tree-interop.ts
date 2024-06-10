@@ -90,6 +90,14 @@ class FamilyTreeJsInterop {
     return familyTreeWrapper.instance;
   }
 
+  public getFamilyTreeWrapper(treeId: string): FamilyTreeWrapper {
+    const familyTreeWrapper = this.familyTrees.get(treeId);
+    if (!familyTreeWrapper) {
+      throw new InvalidArgumentError(`Tree "${treeId}" not found.`);
+    }
+    return familyTreeWrapper;
+  }
+
   public setupFamilyTree(treeId: string, options?: FamilyTree.options) {
     const familyTreeWrapper = this.familyTrees.get(treeId);
     if (familyTreeWrapper) {
@@ -203,14 +211,6 @@ class FamilyTreeJsInterop {
     familyTree.destroy();
 
     this.familyTrees.delete(treeId);
-  }
-
-  private getFamilyTreeWrapper(treeId: string): FamilyTreeWrapper {
-    const familyTreeWrapper = this.familyTrees.get(treeId);
-    if (!familyTreeWrapper) {
-      throw new InvalidArgumentError(`Tree "${treeId}" not found.`);
-    }
-    return familyTreeWrapper;
   }
 
   private static async uploadPhotoAsync(

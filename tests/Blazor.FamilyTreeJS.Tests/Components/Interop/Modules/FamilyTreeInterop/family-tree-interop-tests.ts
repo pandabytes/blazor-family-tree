@@ -1,20 +1,29 @@
 import * as assert from 'assert';
 import * as sinon from 'sinon';
+import * as chai from 'chai';
 import { describe, it } from 'mocha';
 import { FamilyTreeJsInteropObj } from '../../../../../../src/Components/Interop/Modules/FamilyTreeInterop/family-tree-interop';
+import FamilyTree from '@balkangraph/familytree.js';
 
-// This is the id defined in dom-mock.js
+// These ids are defined in dom-mock.js
 const TreeId = 'tree';
+const OtherTreeId = 'other-tree';
 
 describe('family-tree-interop-tests', () => {
   beforeEach(() => {
     FamilyTreeJsInteropObj.setupFamilyTree(TreeId);
+    FamilyTreeJsInteropObj.setupFamilyTree(OtherTreeId);
+
     const familyTree = FamilyTreeJsInteropObj.getFamilyTree(TreeId);
+    const otherFamilyTree = FamilyTreeJsInteropObj.getFamilyTree(OtherTreeId);
+
     sinon.stub(familyTree, 'destroy');
+    sinon.stub(otherFamilyTree, 'destroy');
   });
 
   afterEach(() => {
     FamilyTreeJsInteropObj.destroyTree(TreeId);
+    FamilyTreeJsInteropObj.destroyTree(OtherTreeId);
     sinon.restore();
   });
 
@@ -105,6 +114,56 @@ describe('family-tree-interop-tests', () => {
       assert.equal(false, removed);
       sinon.assert.calledOnce(canRemoveStub);
       sinon.assert.notCalled(removeNodeStub);
+    });
+  });
+
+  describe('addCustomInputElement', () => {
+    it('adds non-existing input type', () => {
+      // Arrange
+      const inputType = 'customInput';
+      const inputCallbackStub = (
+        _data: FamilyTree.node, _editElement: FamilyTree.editFormElement,
+        _minWidth: string, _readOnly: boolean
+      ) => { return { html: ''} };
+
+      // Act
+      FamilyTreeJsInteropObj.addCustomInputElement(TreeId, inputType, inputCallbackStub);
+
+      // Assert
+      const customInputElements = FamilyTreeJsInteropObj.getFamilyTreeWrapper(TreeId).customInputElements;
+      chai.should().exist(customInputElements);
+      chai.expect(customInputElements.has(inputType)).to.be.equal(true);
+    });
+
+    it('adds existing input type throws exception', () => {
+      // Arrange
+      const inputType = 'customInput';
+      const inputCallbackStub = (
+        _data: FamilyTree.node, _editElement: FamilyTree.editFormElement,
+        _minWidth: string, _readOnly: boolean
+      ) => { return { html: ''} };
+      FamilyTreeJsInteropObj.addCustomInputElement(TreeId, inputType, inputCallbackStub);
+
+      // Act & Assert
+      assert.throws(() => {
+        FamilyTreeJsInteropObj.addCustomInputElement(TreeId, inputType, inputCallbackStub);
+      });
+    });
+
+    it('adds existing input type throws exception regardless of tree id', () => {
+      // Arrange
+      const inputType = 'customInput';
+      const inputCallbackStub = (
+        _data: FamilyTree.node, _editElement: FamilyTree.editFormElement,
+        _minWidth: string, _readOnly: boolean
+      ) => { return { html: ''} };
+
+      FamilyTreeJsInteropObj.addCustomInputElement(TreeId, inputType, inputCallbackStub);
+
+      // Act & Assert
+      assert.throws(() => {
+        FamilyTreeJsInteropObj.addCustomInputElement(OtherTreeId, inputType, inputCallbackStub);
+      });
     });
   });
 });
