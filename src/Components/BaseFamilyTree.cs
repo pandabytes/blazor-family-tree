@@ -190,7 +190,8 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
       throw new ArgumentException($"Tree id \"{TreeId}\" already exists. Please use a different id.");
     }
 
-    (FamilyTreeOptions<TNode>? familyTreeOpts, NonFamilyTreeOptions<TNode>? nonFamilyTreeOpts) = Options ?? null!;
+    var familyTreeOpts = Options?.FamilyTreeOptions;
+    var nonFamilyTreeOpts = Options?.NonFamilyTreeOptions;
 
     await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, familyTreeOpts);
     await _familyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
