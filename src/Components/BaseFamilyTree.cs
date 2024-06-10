@@ -1,5 +1,25 @@
 namespace Blazor.FamilyTreeJS.Components;
 
+public static class BaseNodeExtension
+{
+  public static T Get<T>(this BaseNode node, string propertyName)
+  {
+    var type = node.GetType();
+    var property = type.GetProperty(propertyName);
+    var value = (property?.GetValue(node)) ?? throw new ArgumentException($"Failed to get value of property \"{propertyName}\".");
+    return (T)value;
+  }
+
+  public static string ToFirstCharUpper(this string input)
+  {
+    if (string.IsNullOrWhiteSpace(input))
+    {
+      return string.Empty;
+    }
+    return string.Concat(input[0].ToString().ToUpper(), input.AsSpan(1));
+  }
+}
+
 /// <summary>
 /// Base class for the FamilyTreeJS component.
 /// Although it is public, this class is not meant
@@ -87,7 +107,7 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// <summary>
   /// Have to prefix with "tree" to satisfy selector format.
   /// </summary>
-  private string TreeIdForInterop => $"tree-{TreeId}";
+  protected string TreeIdForInterop => $"tree-{TreeId}";
 
   /// <summary>
   /// Make the consturctor internal so that
@@ -202,5 +222,59 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
     {
       await _familyTreeJsInterop.RegisterDefaultFirstNodeHandlerAsync(TreeIdForInterop, OnDefaultFirstNode);
     }
+  
+    var inputName = "readOnlyTextBox";
+    await _familyTreeJsInterop.AddCustomInputElementAsync(inputName, CustomInputElement);
+    await _familyTreeJsInterop.AddCustomInputElementAsync(inputName, CustomInputElement);
+  }
+
+  private InputElementResult CustomInputElement(
+    TNode data, EditFormElement editElement,
+    string minWidth, bool readOnly
+  )
+  {
+    var emptyResult = new InputElementResult(string.Empty, null, null);
+    if (editElement.Binding is null)
+    {
+      return emptyResult;
+    }
+
+    // Binding value is always in camel case so we need to convert it to
+    // pascal case to match with C# naming convention
+    var nodeId = data.Id;
+    var value = data.Get<object?>(editElement.Binding.ToFirstCharUpper());
+
+    if (readOnly && value is null)
+    {
+      return emptyResult;
+    }
+
+    var html = readOnly ? @$"
+      <div class=""bft-input"" data-bft-input="""" data-bft-input-disabled="""">
+        <label for=""{nodeId}"" class=""hasval"">{editElement.Label}</label>
+        <input readonly
+               data-binding=""{editElement.Binding}""
+               maxlength=""256""
+               id=""{nodeId}""
+               name=""{nodeId}""
+               type=""text"" value=""{value}"" autocomplete=""off"">
+      </div>
+    " : @$"
+      <div class=""bft-form-field"" style=""min-width: {minWidth};"">
+        <div class=""bft-input"" data-bft-input="""">
+          <label for=""{nodeId}"" class=""hasval"">{editElement.Label}</label>
+          <input readonly
+                 disabled
+                 data-binding=""{editElement.Binding}""
+                 maxlength=""256"" id=""{nodeId}""
+                 name=""{nodeId}""
+                 type=""text""
+                 value=""{value}""
+                 autocomplete=""off"">
+        </div>
+      </div>
+    ";
+
+    return new(html, nodeId, value);
   }
 }

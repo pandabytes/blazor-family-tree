@@ -27,8 +27,52 @@ type PhotoUploadArgs = {
   fileStreamReference: any
 }
 
+type InputElementCallback = (
+  data: FamilyTree.node, editElement: FamilyTree.editFormElement,
+  minWidth: string, readOnly: boolean
+) => { html: string, id?: number | string, value?: any };
+
+FamilyTree.elements.xxxreadOnlyTextBox = (
+  data: FamilyTree.node, editElement: FamilyTree.editFormElement,
+  minWidth: string, readOnly: boolean
+) => {
+  const id = data['id']
+  console.log(data);
+  console.log(editElement);
+  // Force the "edit" page to render the field as readonly
+  // This means the field is always readonly
+  const value = data[editElement.binding];  
+
+  if (readOnly && !value) {
+    alert('readonly with no value');
+    return { html: '' };
+  }
+
+  const html = (readOnly) ? `
+    <div class="bft-input" data-bft-input="" data-bft-input-disabled="">
+      <label for="${id}" class="hasval">${editElement.label}</label>
+      <input readonly data-binding="${editElement.binding}" maxlength="256" id="${id}" name="${id}" type="text" value="${value}" autocomplete="off">
+    </div>
+  ` : `
+    <div class="bft-form-field" style="min-width: ${minWidth};">    
+      <div class="bft-input" data-bft-input="">
+        <label for="${id}" class="hasval">${editElement.label}</label>
+        <input readonly disabled data-binding="${editElement.binding}" maxlength="256" id="${id}" name="${id}" type="text" value="${value}" autocomplete="off">
+      </div>
+    </div>
+  `;
+
+  return {
+    html: html,
+    id: id,
+    value: value
+  };
+};
+
 class FamilyTreeJsInterop {
   private familyTrees = new Map<string, FamilyTree>();
+
+  private customInputNames = new Map<string, InputElementCallback>();
 
   public treeExist(treeId: string): boolean {
     return this.familyTrees.has(treeId);
@@ -69,6 +113,15 @@ class FamilyTreeJsInterop {
 
   public replaceNodeIds(treeId: string, oldNewIdMappings: { [key: string]: string | number }) {
     this.getFamilyTree(treeId).replaceIds(oldNewIdMappings);
+  }
+
+  public addCustomInputElement(inputName: string, inputCallback: InputElementCallback) {
+    if (this.customInputNames.has(inputName)) {
+      throw new InvalidArgumentError(`Custom element inputName "${inputName}" already existed.`);
+    }
+
+    FamilyTree.elements[inputName] = inputCallback;
+    this.customInputNames.set(inputName, inputCallback);
   }
 
   /**

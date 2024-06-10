@@ -1,5 +1,32 @@
 namespace Blazor.FamilyTreeJS.Components.Interop.Modules.FamilyTreeInterop;
 
+internal sealed class FuncCallbackInterop<T1, T2, T3, T4, TResult> : FuncCallbackInterop<TResult>
+{
+  private class JSInteropWrapper
+  {
+    private readonly Func<T1, T2, T3, T4, TResult> _callback;
+
+    public JSInteropWrapper(Func<T1, T2, T3, T4, TResult> callback) => _callback = callback;
+
+    [JSInvokable]
+    public TResult Invoke(T1 arg1, T2 arg2, T3 arg3, T4 arg4) => _callback.Invoke(arg1, arg2, arg3, arg4);
+  }
+
+  /// <summary>
+  /// Construct with the given <paramref name="callback"/>.
+  /// </summary>
+  public FuncCallbackInterop(Func<T1, T2, T3, T4, TResult> callback)
+    => DotNetRef = DotNetObjectReference.Create(new JSInteropWrapper(callback));
+
+  /// <summary>
+  /// Easy way to convert to a callback interop object.
+  /// Just make sure to dispose it afterwards.
+  /// </summary>
+  /// <param name="callback">Callback.</param>
+  public static implicit operator FuncCallbackInterop<T1, T2, T3, T4, TResult>(Func<T1, T2, T3, T4, TResult> callback)
+    => new(callback);
+}
+
 internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNode : BaseNode
 {
   private const string FamilyTreeJsInteropModule = "FamilyTreeJsInteropObj";
@@ -90,6 +117,17 @@ internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNod
     CallbackInterops.Add(callbackInterop);
     await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerPhotoUploadHandler", treeId, callbackInterop);
   }
+
+  public async Task AddCustomInputElementAsync(
+    string inputName,
+    Func<TNode, EditFormElement, string, bool, InputElementResult> callback
+  )
+  {
+    var callbackInterop = new FuncCallbackInterop<TNode, EditFormElement, string, bool, InputElementResult>(callback);
+    CallbackInterops.Add(callbackInterop);
+    await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.addCustomInputElement", inputName, callbackInterop);
+  }
+
 
   /// <summary>
   /// Destroy the tree object in JS (removing it from view). This doesn't mean
