@@ -119,15 +119,15 @@ internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNod
   }
 
   public async Task AddCustomInputElementAsync(
+    string treeId,
     string inputName,
-    Func<TNode, EditFormElement, string, bool, InputElementResult> callback
+    InputElementCallback<TNode> callback
   )
   {
-    var callbackInterop = new FuncCallbackInterop<TNode, EditFormElement, string, bool, InputElementResult>(callback);
+    var callbackInterop = new FuncCallbackInterop<TNode, EditFormElement, string, bool?, InputElementResult>(callback.Invoke);
     CallbackInterops.Add(callbackInterop);
-    await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.addCustomInputElement", inputName, callbackInterop);
+    await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.addCustomInputElement", treeId, inputName, callbackInterop);
   }
-
 
   /// <summary>
   /// Destroy the tree object in JS (removing it from view). This doesn't mean

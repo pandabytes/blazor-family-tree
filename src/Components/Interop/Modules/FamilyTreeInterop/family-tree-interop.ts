@@ -32,6 +32,11 @@ type InputElementCallback = (
   minWidth: string, readOnly: boolean
 ) => { html: string, id?: number | string, value?: any };
 
+type FamilyTreeWrapper = {
+  instance: FamilyTree;
+  customInputElements?: Map<string, InputElementCallback>;
+}
+
 FamilyTree.elements.xxxreadOnlyTextBox = (
   data: FamilyTree.node, editElement: FamilyTree.editFormElement,
   minWidth: string, readOnly: boolean
@@ -39,6 +44,7 @@ FamilyTree.elements.xxxreadOnlyTextBox = (
   const id = data['id']
   console.log(data);
   console.log(editElement);
+  console.log(readOnly);
   // Force the "edit" page to render the field as readonly
   // This means the field is always readonly
   const value = data[editElement.binding];  
@@ -70,30 +76,28 @@ FamilyTree.elements.xxxreadOnlyTextBox = (
 };
 
 class FamilyTreeJsInterop {
-  private familyTrees = new Map<string, FamilyTree>();
-
-  private customInputNames = new Map<string, InputElementCallback>();
+  private familyTrees = new Map<string, FamilyTreeWrapper>();
 
   public treeExist(treeId: string): boolean {
     return this.familyTrees.has(treeId);
   }
 
   public getFamilyTree(treeId: string): FamilyTree {
-    const familyTree = this.familyTrees.get(treeId);
-    if (!familyTree) {
+    const familyTreeWrapper = this.familyTrees.get(treeId);
+    if (!familyTreeWrapper) {
       throw new InvalidArgumentError(`Tree "${treeId}" not found.`);
     }
-    return familyTree;
+    return familyTreeWrapper.instance;
   }
 
   public setupFamilyTree(treeId: string, options?: FamilyTree.options) {
-    let familyTree = this.familyTrees.get(treeId);
-    if (familyTree) {
+    const familyTreeWrapper = this.familyTrees.get(treeId);
+    if (familyTreeWrapper) {
       return;
     }
 
-    familyTree = new FamilyTree(`#${treeId}`, options);
-    this.familyTrees.set(treeId, familyTree);
+    const familyTree = new FamilyTree(`#${treeId}`, options);
+    this.familyTrees.set(treeId, { instance: familyTree });
   }
 
   public loadNodes(treeId: string, nodes: Array<Object>) {
@@ -115,13 +119,22 @@ class FamilyTreeJsInterop {
     this.getFamilyTree(treeId).replaceIds(oldNewIdMappings);
   }
 
-  public addCustomInputElement(inputName: string, inputCallback: InputElementCallback) {
-    if (this.customInputNames.has(inputName)) {
+  public addCustomInputElement(treeId: string, inputName: string, inputCallback: InputElementCallback) {
+    const familyTreeWrapper = this.getFamilyTreeWrapper(treeId);
+    let customInputElements = familyTreeWrapper.customInputElements;
+
+    if (!customInputElements) {
+      familyTreeWrapper.customInputElements = new Map<string, InputElementCallback>();
+      customInputElements = familyTreeWrapper.customInputElements
+    }
+
+    const keys = Object.keys(FamilyTree.elements);
+    if (keys.includes(inputName)) {
       throw new InvalidArgumentError(`Custom element inputName "${inputName}" already existed.`);
     }
 
+    customInputElements.set(inputName, inputCallback);
     FamilyTree.elements[inputName] = inputCallback;
-    this.customInputNames.set(inputName, inputCallback);
   }
 
   /**
@@ -174,15 +187,30 @@ class FamilyTreeJsInterop {
   }
 
   public destroyTree(treeId: string): void {
-    if (!this.treeExist(treeId)) {
-      return;
+    const familyTreeWrapper = this.getFamilyTreeWrapper(treeId);
+    
+    // Remove custom input elements
+    if (familyTreeWrapper.customInputElements) {
+      familyTreeWrapper.customInputElements.forEach((_v, inputName) => {
+        delete FamilyTree.elements[inputName];
+      });
     }
+    familyTreeWrapper.customInputElements?.clear();
 
     // Destroy will remove all registered events
     // associated to this family tree object
-    const familyTree = this.getFamilyTree(treeId);
+    const familyTree = familyTreeWrapper.instance;
     familyTree.destroy();
+
     this.familyTrees.delete(treeId);
+  }
+
+  private getFamilyTreeWrapper(treeId: string): FamilyTreeWrapper {
+    const familyTreeWrapper = this.familyTrees.get(treeId);
+    if (!familyTreeWrapper) {
+      throw new InvalidArgumentError(`Tree "${treeId}" not found.`);
+    }
+    return familyTreeWrapper;
   }
 
   private static async uploadPhotoAsync(

@@ -1,25 +1,5 @@
 namespace Blazor.FamilyTreeJS.Components;
 
-public static class BaseNodeExtension
-{
-  public static T Get<T>(this BaseNode node, string propertyName)
-  {
-    var type = node.GetType();
-    var property = type.GetProperty(propertyName);
-    var value = (property?.GetValue(node)) ?? throw new ArgumentException($"Failed to get value of property \"{propertyName}\".");
-    return (T)value;
-  }
-
-  public static string ToFirstCharUpper(this string input)
-  {
-    if (string.IsNullOrWhiteSpace(input))
-    {
-      return string.Empty;
-    }
-    return string.Concat(input[0].ToString().ToUpper(), input.AsSpan(1));
-  }
-}
-
 /// <summary>
 /// Base class for the FamilyTreeJS component.
 /// Although it is public, this class is not meant
@@ -47,7 +27,7 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// Options to configure and/or initialize the family tree.
   /// </summary>
   [Parameter]
-  public FamilyTreeOptions<TNode>? Options { get; init; }
+  public RootOptions<TNode>? Options { get; init; }
 
   /// <summary>
   /// Event that gets fired when a node is added, updated, and/or removed.
@@ -202,7 +182,11 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
     await base.DisposeAsyncCore();
   }
 
-  private async Task SetupFamilyTreeAsync()
+  /// <summary>
+  /// Set up the family tree.
+  /// </summary>
+  /// <returns></returns>
+  protected async Task SetupFamilyTreeAsync()
   {
     var exist = await _familyTreeJsInterop.TreeExistAsync(TreeIdForInterop);
     if (exist)
@@ -210,7 +194,9 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
       throw new ArgumentException($"Tree id \"{TreeId}\" already exists. Please use a different id.");
     }
 
-    await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, Options);
+    (FamilyTreeOptions<TNode>? familyTreeOpts, NonFamilyTreeOptions<TNode>? nonFamilyTreeOpts) = Options ?? null!;
+
+    await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, familyTreeOpts);
     await _familyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
 
     if (OnPhotoUpload is not null)
@@ -223,58 +209,17 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
       await _familyTreeJsInterop.RegisterDefaultFirstNodeHandlerAsync(TreeIdForInterop, OnDefaultFirstNode);
     }
   
-    var inputName = "readOnlyTextBox";
-    await _familyTreeJsInterop.AddCustomInputElementAsync(inputName, CustomInputElement);
-    await _familyTreeJsInterop.AddCustomInputElementAsync(inputName, CustomInputElement);
+    await AddCustomInputElementsAsync(nonFamilyTreeOpts);
   }
 
-  private InputElementResult CustomInputElement(
-    TNode data, EditFormElement editElement,
-    string minWidth, bool readOnly
-  )
+  private async Task AddCustomInputElementsAsync(NonFamilyTreeOptions<TNode>? nonFamilyTreeOpts)
   {
-    var emptyResult = new InputElementResult(string.Empty, null, null);
-    if (editElement.Binding is null)
+    var customInputElements = nonFamilyTreeOpts?.CustomInputElements ??
+      Enumerable.Empty<KeyValuePair<string, InputElementCallback<TNode>>>();
+
+    foreach (var (inputName, inputElementCallback) in customInputElements)
     {
-      return emptyResult;
+      await _familyTreeJsInterop.AddCustomInputElementAsync(TreeIdForInterop, inputName, inputElementCallback);
     }
-
-    // Binding value is always in camel case so we need to convert it to
-    // pascal case to match with C# naming convention
-    var nodeId = data.Id;
-    var value = data.Get<object?>(editElement.Binding.ToFirstCharUpper());
-
-    if (readOnly && value is null)
-    {
-      return emptyResult;
-    }
-
-    var html = readOnly ? @$"
-      <div class=""bft-input"" data-bft-input="""" data-bft-input-disabled="""">
-        <label for=""{nodeId}"" class=""hasval"">{editElement.Label}</label>
-        <input readonly
-               data-binding=""{editElement.Binding}""
-               maxlength=""256""
-               id=""{nodeId}""
-               name=""{nodeId}""
-               type=""text"" value=""{value}"" autocomplete=""off"">
-      </div>
-    " : @$"
-      <div class=""bft-form-field"" style=""min-width: {minWidth};"">
-        <div class=""bft-input"" data-bft-input="""">
-          <label for=""{nodeId}"" class=""hasval"">{editElement.Label}</label>
-          <input readonly
-                 disabled
-                 data-binding=""{editElement.Binding}""
-                 maxlength=""256"" id=""{nodeId}""
-                 name=""{nodeId}""
-                 type=""text""
-                 value=""{value}""
-                 autocomplete=""off"">
-        </div>
-      </div>
-    ";
-
-    return new(html, nodeId, value);
   }
 }

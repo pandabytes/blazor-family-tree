@@ -1,4 +1,25 @@
+using System.Text.Json.Serialization;
+
 namespace Blazor.FamilyTreeJS.Components.Interop.Options;
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TNode"></typeparam>
+public record RootOptions<TNode>(
+  FamilyTreeOptions<TNode> FamilyTreeOptions,
+  [property: JsonIgnore] NonFamilyTreeOptions<TNode>? NonFamilyTreeOptions = null
+) where TNode : BaseNode;
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="CustomInputElements"></param>
+/// <typeparam name="TNode"></typeparam>
+/// <returns></returns>
+public record NonFamilyTreeOptions<TNode>(
+  IReadOnlyDictionary<string, InputElementCallback<TNode>>? CustomInputElements = null
+) where TNode : BaseNode;
 
 /// <summary>
 /// This is the root class of all FamilyTreeJS's options and
