@@ -187,10 +187,10 @@ class FamilyTreeJsInterop {
   public registerPhotoUploadHandler(treeId: string, photoUploadHandler: (args: PhotoUploadArgs) => Promise<string>) {
     const familyTree = this.getFamilyTree(treeId);
 
-    familyTree.editUI.on("element-btn-click", (_sender, _args) => {
+    familyTree.editUI.on("element-btn-click", (sender, args, arg1, arg2) => {
       FamilyTree.fileUploadDialog(function (file: File) {
-        FamilyTreeJsInterop.uploadPhotoAsync(familyTree, file, photoUploadHandler);
-      })
+        FamilyTreeJsInterop.uploadPhotoAsync(file, args.input, args.nodeId, photoUploadHandler);
+      });
     });
   }
 
@@ -214,8 +214,9 @@ class FamilyTreeJsInterop {
   }
 
   private static async uploadPhotoAsync(
-    familyTree: FamilyTree,
     file: File,
+    inputElement: HTMLElement,
+    nodeId: string,
     photoUploadFunc: (args: PhotoUploadArgs) => Promise<string>
   ): Promise<void> {
     const bufferArray = await file.arrayBuffer();
@@ -227,12 +228,20 @@ class FamilyTreeJsInterop {
     // Falsy value indicates handler did not do upload successfully
     if (url) {
       // Once we get back an URL, we then set it in the photo textbox html element
-      const photoLabelElement = FamilyTreeJsInterop.findPhotoLabel(familyTree);
-      photoLabelElement?.classList.toggle('hasval', true);
-
-      const photoInputElement = document.querySelector('input[data-binding="photo"');
-      photoInputElement?.setAttribute('value', url);
+      const labelElement = FamilyTreeJsInterop.findLabelElementFromInput(inputElement, nodeId);
+      labelElement?.classList.toggle('hasval', true);
+      inputElement?.setAttribute('value', url);
     }
+  }
+
+  private static findLabelElementFromInput(inputElement: HTMLElement, nodeId: string): HTMLElement | null {
+    const parentElement = inputElement.parentElement;
+    return parentElement.querySelector(`label[for="${nodeId}"]`);
+  }
+
+  private static findLabelNameFromInput(inputElement: HTMLElement, nodeId: string): string | null {
+    const labelElement = FamilyTreeJsInterop.findLabelElementFromInput(inputElement, nodeId);
+    return labelElement?.textContent;
   }
 
   private static findPhotoLabel(familyTree: FamilyTree): HTMLLabelElement | undefined {
