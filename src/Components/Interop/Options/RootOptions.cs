@@ -11,7 +11,7 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 /// stored in this fanmily tree.
 /// </typeparam>
 public record RootOptions<TNode>(
-  FamilyTreeOptions<TNode> FamilyTreeOptions,
+  FamilyTreeOptions<TNode>? FamilyTreeOptions = null,
   [property: JsonIgnore] NonFamilyTreeOptions<TNode>? NonFamilyTreeOptions = null
 ) where TNode : BaseNode;
 

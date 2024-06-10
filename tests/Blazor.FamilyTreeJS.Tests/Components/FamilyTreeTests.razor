@@ -136,8 +136,8 @@
 
     // Act
     var cut = Render(@<DefaultFamilyTree TreeId="test" 
-                                  AfterFamilyTreeRender=@actionSub
-                                  AfterFamilyTreeRenderAsync=@funcSub />);
+                                         AfterFamilyTreeRender=@actionSub
+                                         AfterFamilyTreeRenderAsync=@funcSub />);
 
     // Arrange
     Assert.Equal("action", callbacks[0]);
