@@ -217,9 +217,9 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
     var customInputElements = nonFamilyTreeOpts?.CustomInputElements ??
       Enumerable.Empty<KeyValuePair<string, InputElementCallback<TNode>>>();
 
-    foreach (var (inputName, inputElementCallback) in customInputElements)
+    foreach (var (inputType, inputElementCallback) in customInputElements)
     {
-      await _familyTreeJsInterop.AddCustomInputElementAsync(TreeIdForInterop, inputName, inputElementCallback);
+      await _familyTreeJsInterop.AddCustomInputElementAsync(TreeIdForInterop, inputType, inputElementCallback);
     }
   }
 }

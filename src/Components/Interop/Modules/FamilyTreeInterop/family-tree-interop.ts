@@ -119,7 +119,7 @@ class FamilyTreeJsInterop {
     this.getFamilyTree(treeId).replaceIds(oldNewIdMappings);
   }
 
-  public addCustomInputElement(treeId: string, inputName: string, inputCallback: InputElementCallback) {
+  public addCustomInputElement(treeId: string, inputType: string, inputCallback: InputElementCallback) {
     const familyTreeWrapper = this.getFamilyTreeWrapper(treeId);
     let customInputElements = familyTreeWrapper.customInputElements;
 
@@ -129,12 +129,12 @@ class FamilyTreeJsInterop {
     }
 
     const keys = Object.keys(FamilyTree.elements);
-    if (keys.includes(inputName)) {
-      throw new InvalidArgumentError(`Custom element inputName "${inputName}" already existed.`);
+    if (keys.includes(inputType)) {
+      throw new InvalidArgumentError(`Custom element inputType "${inputType}" already existed.`);
     }
 
-    customInputElements.set(inputName, inputCallback);
-    FamilyTree.elements[inputName] = inputCallback;
+    customInputElements.set(inputType, inputCallback);
+    FamilyTree.elements[inputType] = inputCallback;
   }
 
   /**
@@ -191,8 +191,8 @@ class FamilyTreeJsInterop {
     
     // Remove custom input elements
     if (familyTreeWrapper.customInputElements) {
-      familyTreeWrapper.customInputElements.forEach((_v, inputName) => {
-        delete FamilyTree.elements[inputName];
+      familyTreeWrapper.customInputElements.forEach((_v, inputType) => {
+        delete FamilyTree.elements[inputType];
       });
     }
     familyTreeWrapper.customInputElements?.clear();

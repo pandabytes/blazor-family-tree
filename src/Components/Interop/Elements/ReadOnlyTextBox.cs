@@ -1,14 +1,17 @@
 namespace Blazor.FamilyTreeJS.Components.Interop.Elements;
 
 /// <summary>
-/// 
+/// A custom readonly textbox input element.
 /// </summary>
+/// <remarks>
+/// Based off of https://github.com/BALKANGraph/FamilyTreeJS/issues/119#issuecomment-2155809675.
+/// </remarks>
 public static class ReadOnlyTextBox
 {
   /// <summary>
-  /// 
+  /// Type of the the readonly text box.
   /// </summary>
-  public static readonly string Name = "readOnlyTextBox";
+  public static readonly string Type = "readOnlyTextBox";
 
   /// <summary>
   /// 
@@ -57,7 +60,8 @@ public static class ReadOnlyTextBox
           <input readonly
                  disabled
                  data-binding=""{editElement.Binding}""
-                 maxlength=""256"" id=""{nodeId}""
+                 maxlength=""256""
+                 id=""{nodeId}""
                  name=""{nodeId}""
                  type=""text""
                  value=""{value}""
