@@ -193,9 +193,9 @@ class FamilyTreeJsInterop {
   public registerPhotoUploadHandler(treeId: string, photoUploadHandler: (args: PhotoUploadArgs) => Promise<string>) {
     const familyTree = this.getFamilyTree(treeId);
 
-    familyTree.editUI.on("element-btn-click", (sender, args, arg1, arg2) => {
+    familyTree.editUI.on("element-btn-click", (_sender, args) => {
       FamilyTree.fileUploadDialog(function (file: File) {
-        FamilyTreeJsInterop.uploadPhotoAsync(file, args.input, args.nodeId, photoUploadHandler);
+        FamilyTreeJsInterop.uploadPhotoAsync(file, args.input, photoUploadHandler);
       });
     });
   }
@@ -250,7 +250,6 @@ class FamilyTreeJsInterop {
   private static async uploadPhotoAsync(
     file: File,
     inputElement: HTMLInputElement,
-    nodeId: string,
     photoUploadFunc: (args: PhotoUploadArgs) => Promise<string>
   ): Promise<void> {
     const bufferArray = await file.arrayBuffer();

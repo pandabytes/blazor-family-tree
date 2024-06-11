@@ -60,9 +60,14 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   public Func<TNode>? OnDefaultFirstNode { get; init; }
 
   /// <summary>
+  /// Event that gets fired when a user clicks on the button link
+  /// associated to an input textbox. The return string indicates the value
+  /// to be set in the input textbox.
   /// 
+  /// Since this is a delegate instead of <see cref="EventCallback"/>,
+  /// <see cref="ComponentBase.StateHasChanged"/> will not be automatically
+  /// called. You would need to call this yourself in your delegate.
   /// </summary>
-  /// <value></value>
   [Parameter]
   public Func<TextboxButtonClickedArgs, Task<string>>? OnTextboxButtonClicked { get; init; }
 
