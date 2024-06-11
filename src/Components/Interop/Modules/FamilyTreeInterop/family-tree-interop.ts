@@ -185,7 +185,7 @@ class FamilyTreeJsInterop {
     familyTree.onUpdateNode(updateNodeHandler);
   }
 
-  public registerInputButtonClickedHandler(
+  public registerTextboxButtonClickedHandler(
     treeId: string,
     inputButtonClickedHandler: (args: TextboxButtonClickedArgs) => Promise<string>
   ) {

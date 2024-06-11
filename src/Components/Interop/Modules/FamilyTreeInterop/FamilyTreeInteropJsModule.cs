@@ -88,7 +88,7 @@ internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNod
   {
     var callbackInterop = new FuncCallbackInterop<TextboxButtonClickedArgs, Task<string>>(handler);
     CallbackInterops.Add(callbackInterop);
-    await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerInputButtonClickedHandler", treeId, callbackInterop);
+    await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerTextboxButtonClickedHandler", treeId, callbackInterop);
   }
 
   public async Task AddCustomInputElementAsync(
