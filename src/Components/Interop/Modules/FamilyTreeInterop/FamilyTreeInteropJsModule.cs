@@ -84,11 +84,22 @@ internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNod
     await Module.InvokeVoidAsync(functionId, treeId, callbackInterop);  
   }
 
-  public async Task RegisterOnPhotoUploadCallbackAsync(string treeId, Func<PhotoUploadArgs, Task<string>> handler)
+  public async Task RegisterTextboxButtonClickedHandlerAsync(string treeId, Func<TextboxButtonClickedArgs, Task<string>> handler)
   {
-    var callbackInterop = new FuncCallbackInterop<PhotoUploadArgs, Task<string>>(handler);
+    var callbackInterop = new FuncCallbackInterop<TextboxButtonClickedArgs, Task<string>>(handler);
     CallbackInterops.Add(callbackInterop);
-    await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerPhotoUploadHandler", treeId, callbackInterop);
+    await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.registerTextboxButtonClickedHandler", treeId, callbackInterop);
+  }
+
+  public async Task AddCustomInputElementAsync(
+    string treeId,
+    string inputType,
+    InputElementCallback<TNode> callback
+  )
+  {
+    var callbackInterop = new FuncCallbackInterop<TNode, EditFormElement, string, bool?, InputElementResult>(callback.Invoke);
+    CallbackInterops.Add(callbackInterop);
+    await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.addCustomInputElement", treeId, inputType, callbackInterop);
   }
 
   /// <summary>

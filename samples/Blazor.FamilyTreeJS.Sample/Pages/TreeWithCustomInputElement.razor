@@ -1,0 +1,149 @@
+@page "/tree-with-custom-input-element"
+@using Blazor.FamilyTreeJS.Components.Interop.Elements
+@inject DialogService DialogService
+
+<PageTitle>Tree with Custom Input Element</PageTitle>
+
+<h1>Tree with Custom Input Element</h1>
+
+<p>The field <b>Title</b> is readonly.</p>
+<p>The field <b>Photo</b> is readonly but it can only be changed by uploading a photo.</p>
+
+<button class="btn btn-primary" style="margin-bottom: 0.5rem;" @onclick=@OnResetClick>
+  Reset
+</button>
+
+<p>Number of nodes in family tree: @_nodesCount</p>
+
+<div style="margin-left: 5rem; margin-right: 5rem; height: 550px;">
+  <FamilyTree @ref=@_familyTree
+              TNode="CustomNode"
+              OnUpdatedNode=@OnUpdateNode
+              OnDefaultFirstNode=@OnDefaultFirstNode
+              OnTextboxButtonClicked="@OnTextboxButtonClickedAsync"
+              TreeId="tree-with-custom-node"
+              Options=@_options />
+</div>
+
+@code
+{
+  private record CustomNode : Node
+  {
+    public string Title { get; init; } = string.Empty;
+  }
+
+  private RootOptions<CustomNode> _options = null!;
+
+  private FamilyTree<CustomNode> _familyTree = null!;
+
+  private int _nodesCount = 1;
+
+  private Task OnUpdateNode(UpdateNodeArgs<CustomNode> args)
+  {
+    _nodesCount += args.AddNodesData.Count;
+    if (args.RemoveNodeId is not null)
+    {
+      _nodesCount -= 1;
+    }
+    return Task.CompletedTask;
+  }
+
+  private CustomNode OnDefaultFirstNode()
+  {
+    _nodesCount += 1;
+    StateHasChanged();
+    return new() { Id = "_", Gender = Gender.Male, Title = "Accountant" };
+  }
+
+  private async Task OnResetClick()
+  {
+    await _familyTree.ResetAsync();
+    _nodesCount = 0;
+  }
+
+  private async Task<string?> OnTextboxButtonClickedAsync(TextboxButtonClickedArgs args)
+  {
+    Console.WriteLine($"C#: {args}");
+    if (args.BindingName == "photo")
+    {
+      await DialogService.Confirm(title: "Confirm photo?");
+      return "https://t3.ftcdn.net/jpg/00/51/03/64/240_F_51036433_xmQ53OSQDalSiOhNPlgRkprd9xQ9pDQc.jpg";
+    }
+    if (args.BindingName == "title")
+    {
+      var result = await DialogService.Confirm(title: "Confirm title?");
+      return "Teacher";
+    }
+    
+    return string.Empty;
+  }
+
+  protected override void OnInitialized()
+  {
+    _options = new(
+      FamilyTreeOptions: new(
+        Mode: "dark",
+        Template: Template.Hugo,
+        NodeBinding: new Dictionary<string, string>() 
+        { 
+          { NodeBinding.Field0, "name" },
+          { NodeBinding.Field1, "title" },
+          { NodeBinding.Img0, "photo" },
+        },
+        Nodes: new List<CustomNode>
+        { 
+          new() { Id = "123", Gender = Gender.Male, Name = "Jack Smith", Title = "Senior Consultant" }
+        },
+        NodeMenu: new() {
+          Details = new(Text: "Show details"),
+          Edit = new(Text: "Edit details"),
+          Remove = new(
+            Text: "Remove node",
+            // Although Action means "void" and the lambda is async,
+            // we can just let it run without awaiting and not needing
+            // to know whether the async lambda succeeds or not
+            // Unfortunately FamilyTreeJS does not use async callback.
+            //OnClick: new ActionCallbackInterop<string, object?>(async (nodeId, _) => await _familyTree.RemoveNodeAsync(nodeId))
+            OnClick: (Action<string, object?>)
+             (async (nodeId, _) => await _familyTree.RemoveNodeAsync(nodeId))
+          )
+        },
+        NodeTreeMenu: true,
+        EditForm: new(
+          ReadOnly: false,
+          PhotoBinding: "photo",
+          AddMore: string.Empty,
+          Buttons: new Dictionary<string, ButtonEdit?>()
+          {
+            { "pdf", null },
+            { "share", null},
+            { "remove", null}
+          },
+          Elements: new List<EditFormElement>()
+          {
+            new(Type: "date", Label: "Birth Date", Binding: "birthDate"),
+            new(Type: "date", Label: "Death Date", Binding: "deathDate"),
+            new(Type: ReadOnlyTextboxWithButton.Type, Label: "Photo", Binding: "photo", Btn: "Upload photo"),
+            new(Type: "textbox", Label: "Full Name", Binding: "name"),
+            new(Type: ReadOnlyTextbox.Type, Label: "Title", Binding: "title", Btn: "Update title"),
+            new(
+              Type: "select", Label: "Gender", Binding: "gender",
+              Options: new List<Dictionary<string, string>>()
+              {
+                new() { { "value", "male" }, { "text", "Male" } },
+                new() { { "value", "female" }, { "text", "Female" } }
+              }
+            )
+          }
+        )
+      ),
+      NonFamilyTreeOptions: new(
+        CustomInputElements: new Dictionary<string, InputElementCallback<CustomNode>>
+        {
+          { ReadOnlyTextbox.Type, ReadOnlyTextbox.Callback<CustomNode> },
+          { ReadOnlyTextboxWithButton.Type, ReadOnlyTextboxWithButton.Callback<CustomNode> }
+        }
+      )
+    );
+  }
+}

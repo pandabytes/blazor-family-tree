@@ -44,4 +44,10 @@ public record BaseNode
   /// </summary>
   [JsonPropertyName("mid")]
   public string? MotherId { get; init; }
+
+  /// <summary>
+  /// Profile photo of this node. This is an
+  /// URL link to where the photo is located.
+  /// </summary>
+  public string? Photo { get; init; }
 }

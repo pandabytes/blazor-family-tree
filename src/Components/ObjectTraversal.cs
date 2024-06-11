@@ -19,7 +19,7 @@ internal class ObjectTraversal
   /// <summary>
   /// Find all objects in <paramref name="obj"/> recursively
   /// that satisfy <paramref name="condition"/>. 
-  /// Null and indexer properties will be skipped.
+  /// Null, indexer, and System.Reflection.* properties will be skipped.
   /// This method will only look at public read properties.
   /// </summary>
   /// <param name="obj">Root object.</param>
@@ -52,7 +52,9 @@ internal class ObjectTraversal
       .GetType()
       .GetProperties(BindingFlags.Public | BindingFlags.Instance)
       // Ignore indexers
-      .Where(property => !property.GetIndexParameters().Any());
+      .Where(property => !property.GetIndexParameters().Any())
+      // Ignore type from the System.Reflection namespace
+      .Where(property => !property.PropertyType?.Namespace?.StartsWith("System.Reflection") ?? true);
 
     foreach (var property in properties)
     {

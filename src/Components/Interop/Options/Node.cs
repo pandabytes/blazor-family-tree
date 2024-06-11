@@ -90,12 +90,6 @@ public record Node : BaseNode
   [JsonConverter(typeof(DateOnlyJsonConverter))]
   public DateOnly? DeathDate { get; init; }
 
-  /// <summary>
-  /// Profile photo of this node. This is an
-  /// URL link to where the photo is located.
-  /// </summary>
-  public string? Photo { get; init; }
-
   private static string NormalizeMiddleName(string middleName)
   {
     var tokens = middleName.Split(' ');

@@ -22,34 +22,53 @@ type UpdateNodeArgs = {
   removeNodeId: number | string
 }
 
-type PhotoUploadArgs = {
-  fileName: string,
-  fileStreamReference: any
+type TextboxButtonClickedArgs = {
+  nodeId: string | number;
+  bindingName?: string;
+  buttonText?: string;
+}
+
+type InputElementCallback = (
+  data: FamilyTree.node, editElement: FamilyTree.editFormElement,
+  minWidth: string, readOnly: boolean
+) => { html: string, id?: number | string, value?: any };
+
+type FamilyTreeWrapper = {
+  instance: FamilyTree;
+  customInputElements?: Map<string, InputElementCallback>;
 }
 
 class FamilyTreeJsInterop {
-  private familyTrees = new Map<string, FamilyTree>();
+  private familyTrees = new Map<string, FamilyTreeWrapper>();
 
   public treeExist(treeId: string): boolean {
     return this.familyTrees.has(treeId);
   }
 
   public getFamilyTree(treeId: string): FamilyTree {
-    const familyTree = this.familyTrees.get(treeId);
-    if (!familyTree) {
+    const familyTreeWrapper = this.familyTrees.get(treeId);
+    if (!familyTreeWrapper) {
       throw new InvalidArgumentError(`Tree "${treeId}" not found.`);
     }
-    return familyTree;
+    return familyTreeWrapper.instance;
+  }
+
+  public getFamilyTreeWrapper(treeId: string): FamilyTreeWrapper {
+    const familyTreeWrapper = this.familyTrees.get(treeId);
+    if (!familyTreeWrapper) {
+      throw new InvalidArgumentError(`Tree "${treeId}" not found.`);
+    }
+    return familyTreeWrapper;
   }
 
   public setupFamilyTree(treeId: string, options?: FamilyTree.options) {
-    let familyTree = this.familyTrees.get(treeId);
-    if (familyTree) {
+    const familyTreeWrapper = this.familyTrees.get(treeId);
+    if (familyTreeWrapper) {
       return;
     }
 
-    familyTree = new FamilyTree(`#${treeId}`, options);
-    this.familyTrees.set(treeId, familyTree);
+    const familyTree = new FamilyTree(`#${treeId}`, options);
+    this.familyTrees.set(treeId, { instance: familyTree });
   }
 
   public loadNodes(treeId: string, nodes: Array<Object>) {
@@ -69,6 +88,24 @@ class FamilyTreeJsInterop {
 
   public replaceNodeIds(treeId: string, oldNewIdMappings: { [key: string]: string | number }) {
     this.getFamilyTree(treeId).replaceIds(oldNewIdMappings);
+  }
+
+  public addCustomInputElement(treeId: string, inputType: string, inputCallback: InputElementCallback) {
+    const familyTreeWrapper = this.getFamilyTreeWrapper(treeId);
+    let customInputElements = familyTreeWrapper.customInputElements;
+
+    if (!customInputElements) {
+      familyTreeWrapper.customInputElements = new Map<string, InputElementCallback>();
+      customInputElements = familyTreeWrapper.customInputElements
+    }
+
+    const keys = Object.keys(FamilyTree.elements);
+    if (keys.includes(inputType)) {
+      throw new InvalidArgumentError(`Custom element inputType "${inputType}" already existed.`);
+    }
+
+    customInputElements.set(inputType, inputCallback);
+    FamilyTree.elements[inputType] = inputCallback;
   }
 
   /**
@@ -110,78 +147,61 @@ class FamilyTreeJsInterop {
     familyTree.onUpdateNode(updateNodeHandler);
   }
 
-  public registerPhotoUploadHandler(treeId: string, photoUploadHandler: (args: PhotoUploadArgs) => Promise<string>) {
+  public registerTextboxButtonClickedHandler(
+    treeId: string,
+    inputButtonClickedHandler: (args: TextboxButtonClickedArgs) => Promise<string>
+  ) {
     const familyTree = this.getFamilyTree(treeId);
 
-    familyTree.editUI.on("element-btn-click", (_sender, _args) => {
-      FamilyTree.fileUploadDialog(function (file: File) {
-        FamilyTreeJsInterop.uploadPhotoAsync(familyTree, file, photoUploadHandler);
-      })
+    familyTree.editUI.on('element-btn-click', (_sender, args) => {
+      const inputElement: HTMLInputElement = args.input;
+      const nodeId = args.nodeId;
+      const buttonLinkElement = FamilyTreeJsInterop.findButtonLinkElementFromInput(inputElement);
+      const textboxButtonClickedArgs : TextboxButtonClickedArgs = { 
+        nodeId,
+        buttonText: buttonLinkElement?.textContent,
+        bindingName: inputElement.getAttribute('data-binding'),
+      };
+
+      // Call the handler and then asynchronously update the 
+      // the input textbox's with the value returned from
+      // the handler
+      inputButtonClickedHandler(textboxButtonClickedArgs)
+        .then(value => {
+          const labelElement = FamilyTreeJsInterop.findLabelElementFromInput(inputElement);
+          labelElement?.classList.toggle('hasval', true);
+          inputElement?.setAttribute('value', value);
+      });
     });
   }
 
   public destroyTree(treeId: string): void {
-    if (!this.treeExist(treeId)) {
-      return;
+    const familyTreeWrapper = this.getFamilyTreeWrapper(treeId);
+    
+    // Remove custom input elements
+    if (familyTreeWrapper.customInputElements) {
+      familyTreeWrapper.customInputElements.forEach((_v, inputType) => {
+        delete FamilyTree.elements[inputType];
+      });
     }
+    familyTreeWrapper.customInputElements?.clear();
 
     // Destroy will remove all registered events
     // associated to this family tree object
-    const familyTree = this.getFamilyTree(treeId);
+    const familyTree = familyTreeWrapper.instance;
     familyTree.destroy();
+
     this.familyTrees.delete(treeId);
   }
 
-  private static async uploadPhotoAsync(
-    familyTree: FamilyTree,
-    file: File,
-    photoUploadFunc: (args: PhotoUploadArgs) => Promise<string>
-  ): Promise<void> {
-    const bufferArray = await file.arrayBuffer();
-    const fileStreamReference = await DotNet.createJSStreamReference(bufferArray);
-
-    const args: PhotoUploadArgs = { fileName: file.name, fileStreamReference };
-    const url = await photoUploadFunc(args);
-
-    // Falsy value indicates handler did not do upload successfully
-    if (url) {
-      // Once we get back an URL, we then set it in the photo textbox html element
-      const photoLabelElement = FamilyTreeJsInterop.findPhotoLabel(familyTree);
-      photoLabelElement?.classList.toggle('hasval', true);
-
-      const photoInputElement = document.querySelector('input[data-binding="photo"');
-      photoInputElement?.setAttribute('value', url);
-    }
+  private static findLabelElementFromInput(inputElement: HTMLInputElement): HTMLLabelElement | null {
+    const parentElement = inputElement.parentElement;
+    return parentElement.querySelector('label');
   }
 
-  private static findPhotoLabel(familyTree: FamilyTree): HTMLLabelElement | undefined {
-    const elements = familyTree.config.editForm?.elements;
-    if (!elements) {
-      return;
-    }
-
-    const hasPhoto = (text?: string | null) => {
-      if (!text) {
-        return false;
-      }
-      return text.toLowerCase().includes('photo');
-    }
-
-    const hasPhotoLabel = elements
-      .filter(element => !Array.isArray(element))
-      .map(element => (<FamilyTree.editFormElement>element).label)
-      .some(hasPhoto);
-    
-    if (!hasPhotoLabel) {
-      return;
-    }
-
-    const htmlLabelElements = document.getElementsByTagName('label');
-    for (const htmlElement of <any>htmlLabelElements) {
-      if (hasPhoto(htmlElement.textContent)) {
-        return htmlElement;
-      }
-    }
+  private static findButtonLinkElementFromInput(inputElement: HTMLInputElement): HTMLAnchorElement | null {
+    const parentElement = inputElement.parentElement;
+    return parentElement.querySelector('[data-input-btn]');
   }
 
   private static isFamilyTreeEmpty(familyTree: FamilyTree): boolean {

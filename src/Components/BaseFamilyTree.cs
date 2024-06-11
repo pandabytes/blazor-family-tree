@@ -27,25 +27,13 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// Options to configure and/or initialize the family tree.
   /// </summary>
   [Parameter]
-  public FamilyTreeOptions<TNode>? Options { get; init; }
+  public RootOptions<TNode>? Options { get; init; }
 
   /// <summary>
   /// Event that gets fired when a node is added, updated, and/or removed.
   /// </summary>
   [Parameter]
   public EventCallback<UpdateNodeArgs<TNode>> OnUpdatedNode { get; init; }
-
-  /// <summary>
-  /// Event that gets fired when a user uploads a person's photo.
-  /// The return string indicates the url to where the image is uploaded to.
-  /// Return empty string to indicate upload fails.
-  /// 
-  /// Since this is a delegate instead of <see cref="EventCallback"/>,
-  /// <see cref="ComponentBase.StateHasChanged"/> will not be automatically
-  /// called. You would need to call this yourself in your delegate.
-  /// </summary>
-  [Parameter]
-  public Func<PhotoUploadArgs, Task<string>>? OnPhotoUpload { get; init; }
 
   /// <summary>
   /// Event that gets fired when a user first creates a new node
@@ -58,6 +46,18 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// </summary>
   [Parameter]
   public Func<TNode>? OnDefaultFirstNode { get; init; }
+
+  /// <summary>
+  /// Event that gets fired when a user clicks on the button link
+  /// associated to an input textbox. The return string indicates the value
+  /// to be set in the input textbox.
+  /// 
+  /// Since this is a delegate instead of <see cref="EventCallback"/>,
+  /// <see cref="ComponentBase.StateHasChanged"/> will not be automatically
+  /// called. You would need to call this yourself in your delegate.
+  /// </summary>
+  [Parameter]
+  public Func<TextboxButtonClickedArgs, Task<string>>? OnTextboxButtonClicked { get; init; }
 
   /// <summary>
   /// Custom style for the family tree.
@@ -87,7 +87,7 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// <summary>
   /// Have to prefix with "tree" to satisfy selector format.
   /// </summary>
-  private string TreeIdForInterop => $"tree-{TreeId}";
+  protected string TreeIdForInterop => $"tree-{TreeId}";
 
   /// <summary>
   /// Make the consturctor internal so that
@@ -182,7 +182,7 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
     await base.DisposeAsyncCore();
   }
 
-  private async Task SetupFamilyTreeAsync()
+  private protected async Task SetupFamilyTreeAsync()
   {
     var exist = await _familyTreeJsInterop.TreeExistAsync(TreeIdForInterop);
     if (exist)
@@ -190,17 +190,33 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
       throw new ArgumentException($"Tree id \"{TreeId}\" already exists. Please use a different id.");
     }
 
-    await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, Options);
-    await _familyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
+    var familyTreeOpts = Options?.FamilyTreeOptions;
+    var nonFamilyTreeOpts = Options?.NonFamilyTreeOptions;
 
-    if (OnPhotoUpload is not null)
-    {
-      await _familyTreeJsInterop.RegisterOnPhotoUploadCallbackAsync(TreeIdForInterop, OnPhotoUpload);
-    }
+    await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, familyTreeOpts);
+    await _familyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
 
     if (OnDefaultFirstNode is not null)
     {
       await _familyTreeJsInterop.RegisterDefaultFirstNodeHandlerAsync(TreeIdForInterop, OnDefaultFirstNode);
+    }
+  
+    if (OnTextboxButtonClicked is not null)
+    {
+      await _familyTreeJsInterop.RegisterTextboxButtonClickedHandlerAsync(TreeIdForInterop, OnTextboxButtonClicked);
+    }
+
+    await AddCustomInputElementsAsync(nonFamilyTreeOpts);
+  }
+
+  private async Task AddCustomInputElementsAsync(NonFamilyTreeOptions<TNode>? nonFamilyTreeOpts)
+  {
+    var customInputElements = nonFamilyTreeOpts?.CustomInputElements ??
+      Enumerable.Empty<KeyValuePair<string, InputElementCallback<TNode>>>();
+
+    foreach (var (inputType, inputElementCallback) in customInputElements)
+    {
+      await _familyTreeJsInterop.AddCustomInputElementAsync(TreeIdForInterop, inputType, inputElementCallback);
     }
   }
 }
