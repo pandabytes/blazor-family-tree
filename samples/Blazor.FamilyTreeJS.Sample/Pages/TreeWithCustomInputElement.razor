@@ -1,5 +1,6 @@
 @page "/tree-with-custom-input-element"
 @using Blazor.FamilyTreeJS.Components.Interop.Elements
+@inject DialogService DialogService
 
 <PageTitle>Tree with Custom Input Element</PageTitle>
 
@@ -20,6 +21,7 @@
               OnUpdatedNode=@OnUpdateNode
               OnDefaultFirstNode=@OnDefaultFirstNode
               OnPhotoUpload=@OnPhotoUpload
+              OnTextboxButtonClicked="@OnTextboxButtonClickedAsync"
               TreeId="tree-with-custom-node"
               Options=@_options />
 </div>
@@ -63,6 +65,23 @@
     _nodesCount = 0;
   }
 
+  private async Task<string?> OnTextboxButtonClickedAsync(TextboxButtonClickedArgs args)
+  {
+    Console.WriteLine($"C#: {args}");
+    if (args.BindingName == "photo")
+    {
+      var result = await DialogService.Confirm(title: "Confirm photo?", message: "Testing blah");
+      return result.ToString();
+    }
+    if (args.BindingName == "title")
+    {
+      var result = await DialogService.Confirm(title: "Confirm title?", message: "Testing blah");
+      return "Teacher";
+    }
+    
+    return string.Empty;
+  }
+
   protected override void OnInitialized()
   {
     _options = new(
@@ -77,7 +96,7 @@
         },
         Nodes: new List<CustomNode>
         { 
-          new() { Id = "123", Gender = Gender.Male, Name = "Jack Smith", Title = "Senior Consultant"}
+          new() { Id = "123", Gender = Gender.Male, Name = "Jack Smith", Title = "Senior Consultant" }
         },
         NodeMenu: new() {
           Details = new(Text: "Show details"),
@@ -108,9 +127,9 @@
           {
             new(Type: "date", Label: "Birth Date", Binding: "birthDate"),
             new(Type: "date", Label: "Death Date", Binding: "deathDate"),
-            new(Type: ReadOnlyPhotoUpload.Type, Label: "Photo", Binding: "photo", Btn: "Upload photo"),
+            new(Type: "textbox", Label: "Photo", Binding: "photo", Btn: "Upload photo"),
             new(Type: "textbox", Label: "Full Name", Binding: "name"),
-            new(Type: ReadOnlyTextBox.Type, Label: "Title", Binding: "title"),
+            new(Type: ReadOnlyTextboxWithButton.Type, Label: "Title", Binding: "title", Btn: "Update title"),
             new(
               Type: "select", Label: "Gender", Binding: "gender",
               Options: new List<Dictionary<string, string>>()
@@ -126,7 +145,7 @@
         CustomInputElements: new Dictionary<string, InputElementCallback<CustomNode>>
         {
           { ReadOnlyTextBox.Type, ReadOnlyTextBox.Callback<CustomNode> },
-          { ReadOnlyPhotoUpload.Type, ReadOnlyPhotoUpload.Callback<CustomNode> }
+          { ReadOnlyTextboxWithButton.Type, ReadOnlyTextboxWithButton.Callback<CustomNode> }
         }
       )
     );

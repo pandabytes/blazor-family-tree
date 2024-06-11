@@ -60,6 +60,13 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   public Func<TNode>? OnDefaultFirstNode { get; init; }
 
   /// <summary>
+  /// 
+  /// </summary>
+  /// <value></value>
+  [Parameter]
+  public Func<TextboxButtonClickedArgs, Task<string>>? OnTextboxButtonClicked { get; init; }
+
+  /// <summary>
   /// Custom style for the family tree.
   /// </summary>
   [Parameter]
@@ -206,6 +213,11 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
       await _familyTreeJsInterop.RegisterDefaultFirstNodeHandlerAsync(TreeIdForInterop, OnDefaultFirstNode);
     }
   
+    if (OnTextboxButtonClicked is not null)
+    {
+      await _familyTreeJsInterop.RegisterTextboxButtonClickedHandlerAsync(TreeIdForInterop, OnTextboxButtonClicked);
+    }
+
     await AddCustomInputElementsAsync(nonFamilyTreeOpts);
   }
 

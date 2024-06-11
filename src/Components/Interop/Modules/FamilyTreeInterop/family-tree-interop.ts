@@ -27,6 +27,12 @@ type PhotoUploadArgs = {
   fileStreamReference: any
 }
 
+type TextboxButtonClickedArgs = {
+  nodeId: string | number;
+  bindingName?: string;
+  buttonText?: string;
+}
+
 type InputElementCallback = (
   data: FamilyTree.node, editElement: FamilyTree.editFormElement,
   minWidth: string, readOnly: boolean
@@ -194,6 +200,34 @@ class FamilyTreeJsInterop {
     });
   }
 
+  public registerInputButtonClickedHandler(
+    treeId: string,
+    inputButtonClickedHandler: (args: TextboxButtonClickedArgs) => Promise<string>
+  ) {
+    const familyTree = this.getFamilyTree(treeId);
+
+    familyTree.editUI.on('element-btn-click', (_sender, args) => {
+      const inputElement: HTMLInputElement = args.input;
+      const nodeId = args.nodeId;
+      const buttonLinkElement = FamilyTreeJsInterop.findButtonLinkElementFromInput(inputElement);
+      const textboxButtonClickedArgs : TextboxButtonClickedArgs = { 
+        nodeId,
+        buttonText: buttonLinkElement?.textContent,
+        bindingName: inputElement.getAttribute('data-binding'),
+      };
+
+      // Call the handler and then asynchronously update the 
+      // the input textbox's with the value returned from
+      // the handler
+      inputButtonClickedHandler(textboxButtonClickedArgs)
+        .then(value => {
+          const labelElement = FamilyTreeJsInterop.findLabelElementFromInput(inputElement);
+          labelElement?.classList.toggle('hasval', true);
+          inputElement?.setAttribute('value', value);
+      });
+    });
+  }
+
   public destroyTree(treeId: string): void {
     const familyTreeWrapper = this.getFamilyTreeWrapper(treeId);
     
@@ -215,7 +249,7 @@ class FamilyTreeJsInterop {
 
   private static async uploadPhotoAsync(
     file: File,
-    inputElement: HTMLElement,
+    inputElement: HTMLInputElement,
     nodeId: string,
     photoUploadFunc: (args: PhotoUploadArgs) => Promise<string>
   ): Promise<void> {
@@ -228,20 +262,20 @@ class FamilyTreeJsInterop {
     // Falsy value indicates handler did not do upload successfully
     if (url) {
       // Once we get back an URL, we then set it in the photo textbox html element
-      const labelElement = FamilyTreeJsInterop.findLabelElementFromInput(inputElement, nodeId);
+      const labelElement = FamilyTreeJsInterop.findLabelElementFromInput(inputElement);
       labelElement?.classList.toggle('hasval', true);
       inputElement?.setAttribute('value', url);
     }
   }
 
-  private static findLabelElementFromInput(inputElement: HTMLElement, nodeId: string): HTMLElement | null {
+  private static findLabelElementFromInput(inputElement: HTMLInputElement): HTMLLabelElement | null {
     const parentElement = inputElement.parentElement;
-    return parentElement.querySelector(`label[for="${nodeId}"]`);
+    return parentElement.querySelector('label');
   }
 
-  private static findLabelNameFromInput(inputElement: HTMLElement, nodeId: string): string | null {
-    const labelElement = FamilyTreeJsInterop.findLabelElementFromInput(inputElement, nodeId);
-    return labelElement?.textContent;
+  private static findButtonLinkElementFromInput(inputElement: HTMLInputElement): HTMLAnchorElement | null {
+    const parentElement = inputElement.parentElement;
+    return parentElement.querySelector('[data-input-btn]');
   }
 
   private static findPhotoLabel(familyTree: FamilyTree): HTMLLabelElement | undefined {
