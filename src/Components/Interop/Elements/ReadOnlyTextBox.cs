@@ -6,12 +6,12 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Elements;
 /// <remarks>
 /// Based off of https://github.com/BALKANGraph/FamilyTreeJS/issues/119#issuecomment-2155809675.
 /// </remarks>
-public static class ReadOnlyTextBox
+public static class ReadOnlyTextbox
 {
   /// <summary>
   /// Type of the the readonly text box.
   /// </summary>
-  public static readonly string Type = "readOnlyTextBox";
+  public static readonly string Type = "readOnlyTextbox";
 
   /// <summary>
   /// Callback that will return a HTML string that describes

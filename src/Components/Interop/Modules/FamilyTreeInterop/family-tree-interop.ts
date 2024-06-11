@@ -38,44 +38,6 @@ type FamilyTreeWrapper = {
   customInputElements?: Map<string, InputElementCallback>;
 }
 
-FamilyTree.elements.xxxreadOnlyTextBox = (
-  data: FamilyTree.node, editElement: FamilyTree.editFormElement,
-  minWidth: string, readOnly: boolean
-) => {
-  const id = data['id']
-  console.log(data);
-  console.log(editElement);
-  console.log(readOnly);
-  // Force the "edit" page to render the field as readonly
-  // This means the field is always readonly
-  const value = data[editElement.binding];  
-
-  if (readOnly && !value) {
-    alert('readonly with no value');
-    return { html: '' };
-  }
-
-  const html = (readOnly) ? `
-    <div class="bft-input" data-bft-input="" data-bft-input-disabled="">
-      <label for="${id}" class="hasval">${editElement.label}</label>
-      <input readonly data-binding="${editElement.binding}" maxlength="256" id="${id}" name="${id}" type="text" value="${value}" autocomplete="off">
-    </div>
-  ` : `
-    <div class="bft-form-field" style="min-width: ${minWidth};">    
-      <div class="bft-input" data-bft-input="">
-        <label for="${id}" class="hasval">${editElement.label}</label>
-        <input readonly disabled data-binding="${editElement.binding}" maxlength="256" id="${id}" name="${id}" type="text" value="${value}" autocomplete="off">
-      </div>
-    </div>
-  `;
-
-  return {
-    html: html,
-    id: id,
-    value: value
-  };
-};
-
 class FamilyTreeJsInterop {
   private familyTrees = new Map<string, FamilyTreeWrapper>();
 

@@ -15,7 +15,7 @@
 
 <p>Number of nodes in family tree: @_nodesCount</p>
 
-<div style="margin-left: 5rem; margin-right: 5rem; height: 600px;">
+<div style="margin-left: 5rem; margin-right: 5rem; height: 550px;">
   <FamilyTree @ref=@_familyTree
               TNode="CustomNode"
               OnUpdatedNode=@OnUpdateNode
@@ -66,12 +66,12 @@
     Console.WriteLine($"C#: {args}");
     if (args.BindingName == "photo")
     {
-      var result = await DialogService.Confirm(title: "Confirm photo?", message: "Testing blah");
-      return result.ToString();
+      await DialogService.Confirm(title: "Confirm photo?");
+      return "https://t3.ftcdn.net/jpg/00/51/03/64/240_F_51036433_xmQ53OSQDalSiOhNPlgRkprd9xQ9pDQc.jpg";
     }
     if (args.BindingName == "title")
     {
-      var result = await DialogService.Confirm(title: "Confirm title?", message: "Testing blah");
+      var result = await DialogService.Confirm(title: "Confirm title?");
       return "Teacher";
     }
     
@@ -123,9 +123,9 @@
           {
             new(Type: "date", Label: "Birth Date", Binding: "birthDate"),
             new(Type: "date", Label: "Death Date", Binding: "deathDate"),
-            new(Type: "textbox", Label: "Photo", Binding: "photo", Btn: "Upload photo"),
+            new(Type: ReadOnlyTextboxWithButton.Type, Label: "Photo", Binding: "photo", Btn: "Upload photo"),
             new(Type: "textbox", Label: "Full Name", Binding: "name"),
-            new(Type: ReadOnlyTextboxWithButton.Type, Label: "Title", Binding: "title", Btn: "Update title"),
+            new(Type: ReadOnlyTextbox.Type, Label: "Title", Binding: "title", Btn: "Update title"),
             new(
               Type: "select", Label: "Gender", Binding: "gender",
               Options: new List<Dictionary<string, string>>()
@@ -140,7 +140,7 @@
       NonFamilyTreeOptions: new(
         CustomInputElements: new Dictionary<string, InputElementCallback<CustomNode>>
         {
-          { ReadOnlyTextBox.Type, ReadOnlyTextBox.Callback<CustomNode> },
+          { ReadOnlyTextbox.Type, ReadOnlyTextbox.Callback<CustomNode> },
           { ReadOnlyTextboxWithButton.Type, ReadOnlyTextboxWithButton.Callback<CustomNode> }
         }
       )
