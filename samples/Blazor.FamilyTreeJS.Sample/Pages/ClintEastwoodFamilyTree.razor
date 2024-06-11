@@ -15,7 +15,6 @@
 
 <div style="margin-left: 5rem; margin-right: 5rem; height: 600px;">
   <DefaultFamilyTree @ref=@_familyTree
-                     OnPhotoUpload=@OnPhotoUpload
                      AfterFamilyTreeRenderAsync=@LoadClintEastwoodFamilyAsync
                      TreeId="clinton-eastwood"
                      Options=@_options />
@@ -196,9 +195,6 @@
       },
     });
   }
-
-  private Task<string> OnPhotoUpload(PhotoUploadArgs args)
-    => Task.FromResult("After the photo is uploaded, its URL should be set here.");
 
   private async Task OnResetClick()
   {

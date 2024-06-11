@@ -36,18 +36,6 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   public EventCallback<UpdateNodeArgs<TNode>> OnUpdatedNode { get; init; }
 
   /// <summary>
-  /// Event that gets fired when a user uploads a person's photo.
-  /// The return string indicates the url to where the image is uploaded to.
-  /// Return empty string to indicate upload fails.
-  /// 
-  /// Since this is a delegate instead of <see cref="EventCallback"/>,
-  /// <see cref="ComponentBase.StateHasChanged"/> will not be automatically
-  /// called. You would need to call this yourself in your delegate.
-  /// </summary>
-  [Parameter]
-  public Func<PhotoUploadArgs, Task<string>>? OnPhotoUpload { get; init; }
-
-  /// <summary>
   /// Event that gets fired when a user first creates a new node
   /// on an empty family tree. The return node will be used as
   /// a "default" node when this operation happens.
@@ -207,11 +195,6 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
 
     await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, familyTreeOpts);
     await _familyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
-
-    if (OnPhotoUpload is not null)
-    {
-      await _familyTreeJsInterop.RegisterOnPhotoUploadCallbackAsync(TreeIdForInterop, OnPhotoUpload);
-    }
 
     if (OnDefaultFirstNode is not null)
     {

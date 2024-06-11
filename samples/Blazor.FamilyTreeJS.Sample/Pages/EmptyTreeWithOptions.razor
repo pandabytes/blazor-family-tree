@@ -14,7 +14,6 @@
   <DefaultFamilyTree @ref=@_familyTree
                      OnUpdatedNode=@OnUpdateNode
                      OnDefaultFirstNode=@OnDefaultFirstNode
-                     OnPhotoUpload=@OnPhotoUpload
                      TreeId="empty-tree-with-options"
                      Options=@_options />
 </div>
@@ -43,9 +42,6 @@
     StateHasChanged();
     return new() { Id = "_", Gender = Gender.Male };
   }
-
-  private Task<string> OnPhotoUpload(PhotoUploadArgs args)
-    => Task.FromResult("After the photo is uploaded, its URL should be set here.");
 
   private async Task OnResetClick()
   {

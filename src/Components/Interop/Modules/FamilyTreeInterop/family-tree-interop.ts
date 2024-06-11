@@ -22,11 +22,6 @@ type UpdateNodeArgs = {
   removeNodeId: number | string
 }
 
-type PhotoUploadArgs = {
-  fileName: string,
-  fileStreamReference: any
-}
-
 type TextboxButtonClickedArgs = {
   nodeId: string | number;
   bindingName?: string;
@@ -190,16 +185,6 @@ class FamilyTreeJsInterop {
     familyTree.onUpdateNode(updateNodeHandler);
   }
 
-  public registerPhotoUploadHandler(treeId: string, photoUploadHandler: (args: PhotoUploadArgs) => Promise<string>) {
-    const familyTree = this.getFamilyTree(treeId);
-
-    familyTree.editUI.on("element-btn-click", (_sender, args) => {
-      FamilyTree.fileUploadDialog(function (file: File) {
-        FamilyTreeJsInterop.uploadPhotoAsync(file, args.input, photoUploadHandler);
-      });
-    });
-  }
-
   public registerInputButtonClickedHandler(
     treeId: string,
     inputButtonClickedHandler: (args: TextboxButtonClickedArgs) => Promise<string>
@@ -247,26 +232,6 @@ class FamilyTreeJsInterop {
     this.familyTrees.delete(treeId);
   }
 
-  private static async uploadPhotoAsync(
-    file: File,
-    inputElement: HTMLInputElement,
-    photoUploadFunc: (args: PhotoUploadArgs) => Promise<string>
-  ): Promise<void> {
-    const bufferArray = await file.arrayBuffer();
-    const fileStreamReference = await DotNet.createJSStreamReference(bufferArray);
-
-    const args: PhotoUploadArgs = { fileName: file.name, fileStreamReference };
-    const url = await photoUploadFunc(args);
-
-    // Falsy value indicates handler did not do upload successfully
-    if (url) {
-      // Once we get back an URL, we then set it in the photo textbox html element
-      const labelElement = FamilyTreeJsInterop.findLabelElementFromInput(inputElement);
-      labelElement?.classList.toggle('hasval', true);
-      inputElement?.setAttribute('value', url);
-    }
-  }
-
   private static findLabelElementFromInput(inputElement: HTMLInputElement): HTMLLabelElement | null {
     const parentElement = inputElement.parentElement;
     return parentElement.querySelector('label');
@@ -275,36 +240,6 @@ class FamilyTreeJsInterop {
   private static findButtonLinkElementFromInput(inputElement: HTMLInputElement): HTMLAnchorElement | null {
     const parentElement = inputElement.parentElement;
     return parentElement.querySelector('[data-input-btn]');
-  }
-
-  private static findPhotoLabel(familyTree: FamilyTree): HTMLLabelElement | undefined {
-    const elements = familyTree.config.editForm?.elements;
-    if (!elements) {
-      return;
-    }
-
-    const hasPhoto = (text?: string | null) => {
-      if (!text) {
-        return false;
-      }
-      return text.toLowerCase().includes('photo');
-    }
-
-    const hasPhotoLabel = elements
-      .filter(element => !Array.isArray(element))
-      .map(element => (<FamilyTree.editFormElement>element).label)
-      .some(hasPhoto);
-    
-    if (!hasPhotoLabel) {
-      return;
-    }
-
-    const htmlLabelElements = document.getElementsByTagName('label');
-    for (const htmlElement of <any>htmlLabelElements) {
-      if (hasPhoto(htmlElement.textContent)) {
-        return htmlElement;
-      }
-    }
   }
 
   private static isFamilyTreeEmpty(familyTree: FamilyTree): boolean {

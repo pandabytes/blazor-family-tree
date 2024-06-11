@@ -20,7 +20,6 @@
               TNode="CustomNode"
               OnUpdatedNode=@OnUpdateNode
               OnDefaultFirstNode=@OnDefaultFirstNode
-              OnPhotoUpload=@OnPhotoUpload
               OnTextboxButtonClicked="@OnTextboxButtonClickedAsync"
               TreeId="tree-with-custom-node"
               Options=@_options />
@@ -55,9 +54,6 @@
     StateHasChanged();
     return new() { Id = "_", Gender = Gender.Male, Title = "Accountant" };
   }
-
-  private Task<string> OnPhotoUpload(PhotoUploadArgs args)
-    => Task.FromResult("https://as2.ftcdn.net/v2/jpg/02/11/42/93/1000_F_211429396_N30pkrd7EfFgQ7DJUZUbRDumqYCn3LKG.jpg");
 
   private async Task OnResetClick()
   {

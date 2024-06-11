@@ -15,7 +15,6 @@
               TNode="CustomNode"
               OnUpdatedNode=@OnUpdateNode
               OnDefaultFirstNode=@OnDefaultFirstNode
-              OnPhotoUpload=@OnPhotoUpload
               TreeId="tree-with-custom-node"
               Options=@_options />
 </div>
@@ -49,9 +48,6 @@
     StateHasChanged();
     return new() { Id = "_", Gender = Gender.Male, Title = "Accountant" };
   }
-
-  private Task<string> OnPhotoUpload(PhotoUploadArgs args)
-    => Task.FromResult("After the photo is uploaded, its URL should be set here.");
 
   private async Task OnResetClick()
   {

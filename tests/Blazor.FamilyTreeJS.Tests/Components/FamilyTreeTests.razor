@@ -164,7 +164,6 @@
       .Add(p => p.TreeId, "new-" + treeId)
       .Add(p => p.Options, new())
       .Add(p => p.OnUpdatedNode, onUpdateNode)
-      .Add(p => p.OnPhotoUpload, args => Task.FromResult(string.Empty))
       .Add(p => p.OnDefaultFirstNode, () => new() { Id = "id-0" })
       .Add(p => p.Style, "width: 100px; height: 100px")
       .Add(p => p.AfterFamilyTreeRender, () => {})
@@ -176,7 +175,6 @@
     Assert.Equal(treeId, familyTree.TreeId);
     Assert.Null(familyTree.Options);
     Assert.Equal(default(EventCallback<UpdateNodeArgs<Node>>), familyTree.OnUpdatedNode);
-    Assert.Null(familyTree.OnPhotoUpload);
     Assert.Null(familyTree.OnDefaultFirstNode);
     Assert.Empty(familyTree.Style);
     Assert.Null(familyTree.AfterFamilyTreeRender);
