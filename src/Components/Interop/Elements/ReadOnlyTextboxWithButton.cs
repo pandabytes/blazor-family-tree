@@ -57,15 +57,18 @@ public static class ReadOnlyTextboxWithButton
 
     // Whether it is readonly or not, for this input
     // type we always want to make it readonly
+    // <div class="bft-form-field" style="min-width: 280px;">
     var html = localReadOnly ? $@"
-      <div class=""bft-input"" data-bft-input="""" data-bft-input-disabled="""">
-        <label for=""{nodeId}"" class=""hasval"">{editElement.Label}</label>
-        <input readonly
-               data-binding=""{editElement.Binding}""
-               maxlength=""256""
-               id=""{nodeId}""
-               name=""{nodeId}""
-               type=""text"" value=""{value}"" autocomplete=""off"">
+      <div class=""bft-form-field"" style=""min-width: {minWidth};"">
+        <div class=""bft-input"" data-bft-input="""" data-bft-input-disabled="""">
+          <label for=""{nodeId}"" class=""hasval"">{editElement.Label}</label>
+          <input readonly
+                data-binding=""{editElement.Binding}""
+                maxlength=""256""
+                id=""{nodeId}""
+                name=""{nodeId}""
+                type=""text"" value=""{value}"" autocomplete=""off"">
+        </div>
       </div>
     " : $@"
       <div class=""bft-form-field"" style=""min-width: {minWidth};"">
