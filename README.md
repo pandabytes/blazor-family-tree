@@ -5,7 +5,7 @@ and it is only compatible for Blazor WASM.
 
 FamilyTreeJS version: `1.9.18`
 
-See samples on [Github page](https://pandabytes.github.io/blazor-family-tree/).
+See samples on [Github page](https://pandabytes.github.io/blazor-family-tree/) (CURRENTLY NOT WORKING!).
 
 # Installation
 Install from [Nuget](https://www.nuget.org/packages/Blazor.FamilyTreeJS).
@@ -49,13 +49,7 @@ This allows serializing your derived classes/records with all of their propertie
 var app = builder
   .Build()
   .ConfigureIJSRuntimeJsonOptions();
-  .UseDerivedTypes<Node>(typeof(NodeWithProfession))
   .UseDerivedTypes<NodeMenu>(typeof(CollapseNodeMenu), typeof(DrawLineNodeMenu));
-
-public record NodeWithProfession : Node
-{
-  public string? Job { get; init; } = null;
-}
 
 public record CollapseNodeMenu : NodeMenu
 {
@@ -69,16 +63,75 @@ public record DrawLineNodeMenu : NodeMenu
 ```
 
 # Usage
-Simplest usage is to provide a tree id.
+Simplest usage is to use the `DefaultFamilyTree` component and provide a tree id.
+This component uses the provided `Node` record as the type for the nodes stored in
+the family tree.
 ```razor
-<FamilyTree TreeId="my-tree" />
+<DefaultFamilyTree TreeId="my-tree" />
 ```
 
 This library is heavily driven by the `FamilyTreeOptions` class so almost
 every control and UI are specified via this class. This C# class mirrors this
 Typescript [options](https://balkan.app/FamilyTreeJS/API/interfaces/FamilyTree.options) interface.
 ```razor
-<FamilyTree TreeId="my-tree" Options=@new() { Mode = "dark" } />
+<DefaultFamilyTree TreeId="my-tree"
+                   Options=@new() { FamilyTreeOptions: new(Mode = "dark") } />
+```
+
+If you want to provide your own node with custom properties then you must have
+your custom node type inherits `BaseNode`, and use the `FamilyTree<TNode>` component instead.
+```razor
+public record NodeWithProfession : BaseNode
+{
+  public string? Job { get; init; }
+}
+
+<FamilyTree TNode="NodeWithProfession"
+            TreeId="my-tree"
+            Options=@new() { FamilyTreeOptions: new(Mode = "dark") } />
+```
+
+## Define custom input element
+An input element is a HTML element of a node that the user can view and/or edit. For example, the `Node` record has the property `Name`. The equivalent input element of
+this property is `<input  type="text" <other_attributes />`. This property can be viewed
+when the node is clicked and can be edited when the user navigates to the "Edit details"
+of the node.
+
+To provide your own custom HTML for an input element, you can reference to one of the
+provided custom input element in this library, such as
+[ReadOnlyTextbox](https://github.com/pandabytes/blazor-family-tree/blob/master/src/Components/Interop/Elements/ReadOnlyTextBox.cs).
+
+After you define your custom input element, you have to "register" it with a unique type string. This type
+must be unique across all family tree instances. If the same type is defined more than once, an
+exception will be thrown.
+```razor
+public record NodeWithProfession : BaseNode
+{
+  public string? Job { get; init; }
+}
+
+<FamilyTree TNode="NodeWithProfession"
+            TreeId="my-tree"
+            Options=@new(
+              // Skip other properties for brevity
+              FamilyTreeOptions: new(
+                EditForm: new(
+                  Elements: new List<EditFormElement>()
+                  {
+                    // Here you reference your custom input
+                    new(Type: "customInput", Label: "Job", Binding: "job"),
+                  }
+                )
+              ),
+              NonFamilyTreeOptions: new(
+                CustomInputElements: new Dictionary<string, InputElementCallback<CustomNode>>
+                {
+                  // Register your custom input here
+                  // "customInput" is the type - this must be unique across all family tree instances
+                  { "customInput", CustomInput.Callback<NodeWithProfession> }
+                }
+              )
+            ) />
 ```
 
 Please refer to the [sample project](https://github.com/pandabytes/blazor-family-tree/tree/master/samples/Blazor.FamilyTreeJS.Sample/Pages)
