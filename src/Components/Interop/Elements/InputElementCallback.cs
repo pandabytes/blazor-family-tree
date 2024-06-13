@@ -8,7 +8,7 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Elements;
 /// <param name="Id">Node id.</param>
 /// <param name="Value">Value of the input.</param>
 /// <returns></returns>
-public record InputElementResult(string Html, string? Id, object? Value);
+public sealed record InputElementResult(string Html, string? Id, object? Value);
 
 /// <summary>
 /// Callback that will return a HTML string that describes

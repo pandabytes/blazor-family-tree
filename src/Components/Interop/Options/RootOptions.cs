@@ -10,7 +10,7 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 /// The type of the nodes that are
 /// stored in this fanmily tree.
 /// </typeparam>
-public record RootOptions<TNode>(
+public sealed record RootOptions<TNode>(
   FamilyTreeOptions<TNode>? FamilyTreeOptions = null,
   [property: JsonIgnore] NonFamilyTreeOptions<TNode>? NonFamilyTreeOptions = null
 ) where TNode : BaseNode;
@@ -30,7 +30,7 @@ public record RootOptions<TNode>(
 /// a family tree, then other family trees cannot use this input type.
 /// </param>
 /// <typeparam name="TNode"></typeparam>
-public record NonFamilyTreeOptions<TNode>(
+public sealed record NonFamilyTreeOptions<TNode>(
   IReadOnlyDictionary<string, InputElementCallback<TNode>>? CustomInputElements = null
 ) where TNode : BaseNode;
 
@@ -52,7 +52,7 @@ public record NonFamilyTreeOptions<TNode>(
 /// The type of the nodes that are
 /// stored in this fanmily tree options object.
 /// </typeparam>
-public record FamilyTreeOptions<TNode>(
+public sealed record FamilyTreeOptions<TNode>(
   string Mode = "light",
   bool? EnableSearch = null,
   bool? EnablePan = null,

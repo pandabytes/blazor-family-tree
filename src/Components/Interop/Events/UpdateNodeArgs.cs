@@ -12,7 +12,7 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Events;
 /// The type of the nodes that were
 /// added/updated/removed.
 /// </typeparam>
-public record UpdateNodeArgs<TNode>(
+public sealed record UpdateNodeArgs<TNode>(
   IReadOnlyList<TNode> AddNodesData,
   IReadOnlyList<TNode> UpdateNodesData,
   string? RemoveNodeId = null

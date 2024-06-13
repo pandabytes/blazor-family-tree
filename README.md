@@ -3,7 +3,9 @@
 This is a wrapper library for [FamilyTreeJS](https://balkan.app/FamilyTreeJS)
 and it is only compatible for Blazor WASM.
 
-FamilyTreeJS version: `1.9.18`
+Current FamilyTreeJS version packaged in this library: `1.9.36`.
+
+[Here](https://familytreejs.balkan.app/JS/List) is the release note list of FamilyTreeJS.
 
 See samples on [Github page](https://pandabytes.github.io/blazor-family-tree/) (CURRENTLY NOT WORKING!).
 
