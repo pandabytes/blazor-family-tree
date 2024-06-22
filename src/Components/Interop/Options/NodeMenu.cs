@@ -11,7 +11,7 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 /// First argument is the node id.
 /// Second argument is unused, hence it's always null.
 /// </param>
-public record Menu(
+public sealed record Menu(
   string Text,
   string? Icon = null,
   ActionCallbackInterop<string, object?>? OnClick = null
@@ -24,5 +24,6 @@ public record Menu(
 public record NodeMenu(
   Menu? Add = null,
   Menu? Details = null,
-  Menu? Edit = null,Menu? Remove = null
+  Menu? Edit = null,
+  Menu? Remove = null
 );
