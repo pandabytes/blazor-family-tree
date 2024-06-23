@@ -1,4 +1,5 @@
 ﻿@page "/clint-eastwood-family-tree"
+@using Blazor.FamilyTreeJS.Components.Interop.Modules.FamilyTreeStatic
 
 <PageTitle>Clint Eastwood</PageTitle>
 
@@ -14,17 +15,25 @@
 </button>
 
 <div style="margin-left: 5rem; margin-right: 5rem; height: 600px;">
-  <DefaultFamilyTree @ref=@_familyTree
-                     AfterFamilyTreeRenderAsync=@LoadClintEastwoodFamilyAsync
-                     TreeId="clinton-eastwood"
-                     Options=@_options />
+  @if (_initialized)
+  {
+    <DefaultFamilyTree @ref=@_familyTree
+                      AfterFamilyTreeRenderAsync=@LoadClintEastwoodFamilyAsync
+                      TreeId="clinton-eastwood"
+                      Options=@_options />
+  }
 </div>
 
 @code
 {
+  private bool _initialized = false;
+
   private RootOptions<Node> _options = null!;
 
   private DefaultFamilyTree _familyTree = null!;
+
+  [Inject]
+  private FamilyTreeStaticModule FamilyTreeStaticModule { get; set; } = null!;
 
   private async Task LoadClintEastwoodFamilyAsync()
   {
@@ -202,8 +211,10 @@
     await LoadClintEastwoodFamilyAsync();
   }
 
-  protected override void OnInitialized()
+  protected override async Task OnInitializedAsync()
   {
+    _initialized = false;
+
     _options = new(
       FamilyTreeOptions: new(
         Mode: "dark",
@@ -215,7 +226,8 @@
         },
         NodeMenu: new() {
           Details = new(Text: "Show details"),
-          Edit = new(Text: "Edit details"),
+          Edit = new(Text: "Edit details",
+                     Icon: await FamilyTreeStaticModule.GetIconAsync(Icon.User, "24", "24", "white")),
           Remove = new(
             Text: "Remove node",
             // Although Action means "void" and the lambda is async,
@@ -256,5 +268,7 @@
         )
       )
     );
+
+    _initialized = true;
   }
 }
