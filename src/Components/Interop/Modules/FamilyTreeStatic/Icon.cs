@@ -44,10 +44,7 @@ public sealed class Icon : StringEnum
 
   public static readonly Icon Close = new("close");
 
-  /// <summary>
-  /// Ft means Family Tree.
-  /// </summary>
-  public static readonly Icon Ft = new("ft");
+  public static readonly Icon FamilyTree = new("ft");
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
