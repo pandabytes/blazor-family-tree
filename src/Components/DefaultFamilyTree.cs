@@ -4,5 +4,5 @@ namespace Blazor.FamilyTreeJS.Components;
 /// The default family tree with the
 /// the type <see cref="Node"/> for nodes.
 /// </summary>
-public sealed class DefaultFamilyTree : FamilyTree<Node>
+public sealed class DefaultFamilyTree : BaseFamilyTree<Node>
 {}
