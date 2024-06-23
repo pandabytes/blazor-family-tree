@@ -4,7 +4,7 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Options;
 
 /// <summary>
 /// The root object that contains all the options
-/// for the <see cref="BaseFamilyTree{TNode}"/> component.
+/// for the <see cref="FamilyTree{TNode}"/> component.
 /// </summary>
 /// <typeparam name="TNode">
 /// The type of the nodes that are
@@ -25,7 +25,7 @@ public sealed record RootOptions<TNode>(
 /// Key is the input type such as "myCustomTextBox" and value
 /// is a callback that constructs an HTML string that FamilyTreeJS
 /// can use to render. Note that the input type must be unique
-/// across ALL instances of <see cref="BaseFamilyTree{TNode}" />.
+/// across ALL instances of <see cref="FamilyTree{TNode}" />.
 /// For example, if input type "myCustomTextBox" is already used by
 /// a family tree, then other family trees cannot use this input type.
 /// </param>
