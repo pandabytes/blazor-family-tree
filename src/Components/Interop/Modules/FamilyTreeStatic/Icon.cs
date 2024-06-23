@@ -4,6 +4,7 @@ namespace Blazor.FamilyTreeJS.Components.Interop.Modules.FamilyTreeStatic;
 
 /// <summary>
 /// Available icons from FamilyTreeJS.
+/// See https://balkan.app/FamilyTreeJS/API/classes/FamilyTree#icon.
 /// </summary>
 public sealed class Icon : StringEnum
 {

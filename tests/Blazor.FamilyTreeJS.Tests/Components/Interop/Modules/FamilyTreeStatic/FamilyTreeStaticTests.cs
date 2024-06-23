@@ -4,7 +4,7 @@ public class FamilyTreeStaticTests : TestContext
 {
   public static IEnumerable<object[]> GetTestIcons()
   {
-    var iconsWithXAndYParams = new List<Icon> { Icon.Share, Icon.User, Icon.AddUser, Icon.Close, Icon.Ft };
+    var iconsWithXAndYParams = new List<Icon> { Icon.Share, Icon.User, Icon.AddUser, Icon.Close, Icon.FamilyTree };
     foreach (var icon in iconsWithXAndYParams)
     {
       yield return new object[] { icon };

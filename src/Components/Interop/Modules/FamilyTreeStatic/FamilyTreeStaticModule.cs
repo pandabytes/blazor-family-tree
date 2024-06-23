@@ -35,7 +35,7 @@ public sealed class FamilyTreeStaticModule : BaseJsModule
   /// <remarks>
   /// Only the following icons can accept <paramref name="x"/> and <paramref name="y"/>:
   /// <see cref="Icon.Share"/>, <see cref="Icon.User"/>, 
-  /// <see cref="Icon.AddUser"/>, <see cref="Icon.Close"/>, <see cref="Icon.Ft"/>.
+  /// <see cref="Icon.AddUser"/>, <see cref="Icon.Close"/>, <see cref="Icon.FamilyTree"/>.
   /// Other icons will thrown an <see cref="ArgumentException"/>.
   /// </remarks>
   /// <param name="icon">Icon type.</param>
@@ -47,7 +47,7 @@ public sealed class FamilyTreeStaticModule : BaseJsModule
   /// <returns>Icon in SVG string.</returns>
   public async Task<string> GetIconAsync(Icon icon, string width, string height, string color, string? x = null, string? y = null)
   {
-    var iconsWithXAndYParams = new List<Icon> { Icon.Share, Icon.User, Icon.AddUser, Icon.Close, Icon.Ft };
+    var iconsWithXAndYParams = new List<Icon> { Icon.Share, Icon.User, Icon.AddUser, Icon.Close, Icon.FamilyTree };
     var hasXOrYParameter = !string.IsNullOrWhiteSpace(x) || !string.IsNullOrWhiteSpace(y);
 
     if (!iconsWithXAndYParams.Contains(icon) && hasXOrYParameter)
