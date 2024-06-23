@@ -138,3 +138,28 @@ public record NodeWithProfession : BaseNode
 
 Please refer to the [sample project](https://github.com/pandabytes/blazor-family-tree/tree/master/samples/Blazor.FamilyTreeJS.Sample/Pages)
 for more examples.
+
+## Using `FamilyTreeStaticModule`
+To use the static methods defined in `FamilyTreeJS`, you would have to call them via this class
+`FamilyTreeStaticModule`. This class is simply a wrapper class for the static methods defined
+in `FamilyTreeJS`. 
+
+To use it, you would have to manually register it in your DI container. Then you would have request
+an instance of it and call `.ImportAsync()` to import the JavaScript module. Due to this class having
+an asynchronous initilization, it is recommended to regsiter it as a singleton so that you don't
+have to deal with when to call `ImportAsync()` when requesting it.
+```cs
+builder.Services
+  .AddBlazorFamilyJS()
+  // Register it as a singleton
+  .AddSingleton<FamilyTreeStaticModule>()
+  .AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+var webHost = builder.Build();
+
+// Get the module object and import the JS module
+var familyTreeStaticModule = webHost.Services.GetRequiredService<FamilyTreeStaticModule>();
+await familyTreeStaticModule.ImportAsync();
+
+await webHost.RunAsync();
+```
