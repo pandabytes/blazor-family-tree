@@ -42,12 +42,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazor.Core" Version="1.0.9" />
+    <PackageReference Include="Blazor.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.10" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.11" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.2.2">
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.4.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -63,17 +63,15 @@
   </PropertyGroup>
 
   <Target Name="RemoveWwwRootBeforeBuild" BeforeTargets="BeforeBuild">
-    <RemoveDir Directories="$(ProjectRoot)/wwwroot/"/>
+    <RemoveDir Directories="$(ProjectRoot)/wwwroot/" />
   </Target>
 
   <Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="$(ProjectRoot)/package.json" Outputs="$(NpmInstallStampFile)">
-    <Exec WorkingDirectory="$(NpmRoot)"
-          Command="npm install" />
+    <Exec WorkingDirectory="$(NpmRoot)" Command="npm install" />
     <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
   </Target>
 
   <Target Name="RunNpmBuild" AfterTargets="PostBuildEvent">
-    <Exec WorkingDirectory="$(ProjectRoot)"
-          Command="npm run rollup-build" />
+    <Exec WorkingDirectory="$(ProjectRoot)" Command="npm run rollup-build" />
   </Target>
 </Project>
