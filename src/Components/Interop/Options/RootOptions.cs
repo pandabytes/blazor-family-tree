@@ -62,5 +62,7 @@ public sealed record FamilyTreeOptions<TNode>(
   IReadOnlyList<TNode>? Nodes = null,
   IReadOnlyDictionary<string, string>? NodeBinding = null,
   EditForm? EditForm = null,
-  bool? NodeTreeMenu = null
+  bool? NodeTreeMenu = null,
+  Toolbar? Toolbar = null,
+  IReadOnlyList<string>? Roots = null
 ) where TNode : BaseNode;
