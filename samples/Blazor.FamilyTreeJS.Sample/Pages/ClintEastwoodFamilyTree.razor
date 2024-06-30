@@ -20,6 +20,7 @@
     <DefaultFamilyTree @ref=@_familyTree
                       AfterFamilyTreeRenderAsync=@LoadClintEastwoodFamilyAsync
                       TreeId="clinton-eastwood"
+                      OnUpdatedNode=@HandleOnUpdateNode
                       Options=@_options />
   }
 </div>
@@ -205,6 +206,11 @@
     });
   }
 
+  private void HandleOnUpdateNode(UpdateNodeArgs<Node> args)
+  {
+    Console.WriteLine(args);
+  }
+
   private async Task OnResetClick()
   {
     await _familyTree.ResetAsync();
@@ -218,6 +224,8 @@
     _options = new(
       FamilyTreeOptions: new(
         Mode: "dark",
+        MiniMap: false,
+        Toolbar: new(ExpandAll: true, Zoom: true, FullScreen: true),
         Template: Template.Hugo,
         NodeBinding: new Dictionary<string, string>() 
         { 
