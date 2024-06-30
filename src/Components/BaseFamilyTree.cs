@@ -15,7 +15,7 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// Allow this field to be inherited only within this assembly.
   /// </summary>
   [InjectScope, AutoImportJsModule]
-  private protected readonly FamilyTreeInteropJsModule<TNode> _familyTreeJsInterop = null!;
+  private protected FamilyTreeInteropJsModule<TNode> FamilyTreeJsInterop { get; init; } = null!;
 
   /// <summary>
   /// Specify the id of the tree.
@@ -104,7 +104,7 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// </summary>
   /// <param name="nodes">Nodes to be loaded.</param>
   public async Task LoadNodesAsync(IEnumerable<TNode> nodes)
-    => await _familyTreeJsInterop.LoadNodesAsync(TreeIdForInterop, nodes);
+    => await FamilyTreeJsInterop.LoadNodesAsync(TreeIdForInterop, nodes);
 
   /// <summary>
   /// Replace all references of an old node id with new node id.
@@ -113,7 +113,7 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// </summary>
   /// <param name="oldNewIdMappings">Old id is key, new id is value.</param>
   public async Task ReplaceNodeIdsAsync(IDictionary<string, string> oldNewIdMappings)
-    => await _familyTreeJsInterop.ReplaceNodeIdsAsync(TreeIdForInterop, oldNewIdMappings);
+    => await FamilyTreeJsInterop.ReplaceNodeIdsAsync(TreeIdForInterop, oldNewIdMappings);
 
   /// <summary>
   /// Remove a node from the family tree.
@@ -121,14 +121,14 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// <param name="nodeId">Id of the node to be removed.</param>
   /// <returns>True if node was removed, false otherwise.</returns>
   public async Task<bool> RemoveNodeAsync(string nodeId)
-    => await _familyTreeJsInterop.RemoveNodeAsync(TreeIdForInterop, nodeId);
+    => await FamilyTreeJsInterop.RemoveNodeAsync(TreeIdForInterop, nodeId);
 
   /// <summary>
   /// Reset the the family tree to a clean state, i.e. to its initial state.
   /// </summary>
   public async Task ResetAsync()
   {
-    await _familyTreeJsInterop.DestroyTreeAsync(TreeIdForInterop);
+    await FamilyTreeJsInterop.DestroyTreeAsync(TreeIdForInterop);
     await SetupFamilyTreeAsync();
     StateHasChanged();
   }
@@ -178,13 +178,13 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
   /// <inheritdoc/>
   protected override async ValueTask DisposeAsyncCore()
   {
-    await _familyTreeJsInterop.DestroyTreeAsync(TreeIdForInterop);
+    await FamilyTreeJsInterop.DestroyTreeAsync(TreeIdForInterop);
     await base.DisposeAsyncCore();
   }
 
   private protected async Task SetupFamilyTreeAsync()
   {
-    var exist = await _familyTreeJsInterop.TreeExistAsync(TreeIdForInterop);
+    var exist = await FamilyTreeJsInterop.TreeExistAsync(TreeIdForInterop);
     if (exist)
     {
       throw new ArgumentException($"Tree id \"{TreeId}\" already exists. Please use a different id.");
@@ -193,17 +193,17 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
     var familyTreeOpts = Options?.FamilyTreeOptions;
     var nonFamilyTreeOpts = Options?.NonFamilyTreeOptions;
 
-    await _familyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, familyTreeOpts);
-    await _familyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
+    await FamilyTreeJsInterop.SetupFamilyTreeAsync(TreeIdForInterop, familyTreeOpts);
+    await FamilyTreeJsInterop.RegisterOnUpdateNodeCallbackAsync(TreeIdForInterop, OnUpdatedNode);
 
     if (OnDefaultFirstNode is not null)
     {
-      await _familyTreeJsInterop.RegisterDefaultFirstNodeHandlerAsync(TreeIdForInterop, OnDefaultFirstNode);
+      await FamilyTreeJsInterop.RegisterDefaultFirstNodeHandlerAsync(TreeIdForInterop, OnDefaultFirstNode);
     }
   
     if (OnTextboxButtonClicked is not null)
     {
-      await _familyTreeJsInterop.RegisterTextboxButtonClickedHandlerAsync(TreeIdForInterop, OnTextboxButtonClicked);
+      await FamilyTreeJsInterop.RegisterTextboxButtonClickedHandlerAsync(TreeIdForInterop, OnTextboxButtonClicked);
     }
 
     await AddCustomInputElementsAsync(nonFamilyTreeOpts);
@@ -216,7 +216,7 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
 
     foreach (var (inputType, inputElementCallback) in customInputElements)
     {
-      await _familyTreeJsInterop.AddCustomInputElementAsync(TreeIdForInterop, inputType, inputElementCallback);
+      await FamilyTreeJsInterop.AddCustomInputElementAsync(TreeIdForInterop, inputType, inputElementCallback);
     }
   }
 }
