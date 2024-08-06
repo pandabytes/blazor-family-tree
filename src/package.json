@@ -17,6 +17,6 @@
     "rollup-plugin-multi-input": "^1.4.1"
   },
   "dependencies": {
-    "@balkangraph/familytree.js": "^1.9.36"
+    "@balkangraph/familytree.js": "^1.9.40"
   }
 }
