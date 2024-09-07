@@ -9,9 +9,7 @@ internal class PolymorphicTypeResolver : DefaultJsonTypeInfoResolver
   private readonly IDictionary<Type, JsonPolymorphismOptions> _typeJsonPolyOpts;
 
   public PolymorphicTypeResolver()
-  {  
-    _typeJsonPolyOpts = new Dictionary<Type, JsonPolymorphismOptions>();
-  }
+    => _typeJsonPolyOpts = new Dictionary<Type, JsonPolymorphismOptions>();
 
   /// <inheritdoc />
   public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
@@ -44,7 +42,7 @@ internal class PolymorphicTypeResolver : DefaultJsonTypeInfoResolver
     {
       if (!baseType.IsAssignableFrom(type))
       {
-        throw new ArgumentException($"Type {type.FullName} doesn't inhereit class {baseType.FullName}.");
+        throw new ArgumentException($"Type {type.FullName} doesn't inhereit type {baseType.FullName}.");
       }
 
       var found = _typeJsonPolyOpts.TryGetValue(baseType, out var jsonPolyOpts);

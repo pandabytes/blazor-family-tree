@@ -20,7 +20,7 @@ builder.Services
 
 var webHost = builder
   .Build()
-  .ConfigureIJSRuntimeJsonOptions();
+  .ConfigureIJSRuntimeJsonOptionsForBlazorFamilyTree();
 
 var familyTreeStaticModule = webHost.Services.GetRequiredService<FamilyTreeStaticModule>();
 await familyTreeStaticModule.ImportAsync();
