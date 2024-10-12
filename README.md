@@ -3,11 +3,9 @@
 This is a wrapper library for [FamilyTreeJS](https://balkan.app/FamilyTreeJS)
 and it is only compatible for Blazor WASM.
 
-Current FamilyTreeJS version packaged in this library: `1.9.40`.
+Current FamilyTreeJS version packaged in this library: `1.9.44`.
 
 [Here](https://familytreejs.balkan.app/JS/List) is the release note list of FamilyTreeJS.
-
-See samples on [Github page](https://pandabytes.github.io/blazor-family-tree/) (CURRENTLY NOT WORKING!).
 
 # Installation
 Install from [Nuget](https://www.nuget.org/packages/Blazor.FamilyTreeJS).
@@ -33,13 +31,13 @@ var app = builder
 ## Enable C# callback interop with Javascript
 This library depends on the library `Blazor.Core` in which provides the feature to help
 serialize/deserialize C# callback to Javascript. To ensure `Blazor.FamilyTreeJS` work
-correctly, you must call `RegisterAttachReviverAsync()` from the `Blazor.Core` library.
+correctly, you must call `RegisterCallbackReviverAsync()` from the `Blazor.Core` library.
 ```cs
 var webHost = builder
   .Build()
   .ConfigureIJSRuntimeJsonOptions();
 
-await webHost.Services.RegisterAttachReviverAsync();
+await webHost.RegisterCallbackReviverAsync();
 await webHost.RunAsync();
 ```
 

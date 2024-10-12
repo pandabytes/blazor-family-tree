@@ -9,7 +9,7 @@
   "author": "pandabytes",
   "license": "MIT",
   "devDependencies": {
-    "@microsoft/dotnet-js-interop": "^7.0.14",
+    "@microsoft/dotnet-js-interop": "^8.0.0",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
@@ -17,6 +17,6 @@
     "rollup-plugin-multi-input": "^1.4.1"
   },
   "dependencies": {
-    "@balkangraph/familytree.js": "^1.9.40"
+    "@balkangraph/familytree.js": "^1.9.44"
   }
 }

@@ -25,5 +25,5 @@ var webHost = builder
 var familyTreeStaticModule = webHost.Services.GetRequiredService<FamilyTreeStaticModule>();
 await familyTreeStaticModule.ImportAsync();
 
-await webHost.Services.RegisterAttachReviverAsync();
+await webHost.RegisterCallbackReviverAsync();
 await webHost.RunAsync();
