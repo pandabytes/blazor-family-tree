@@ -7,8 +7,6 @@ Current FamilyTreeJS version packaged in this library: `1.9.40`.
 
 [Here](https://familytreejs.balkan.app/JS/List) is the release note list of FamilyTreeJS.
 
-See samples on [Github page](https://pandabytes.github.io/blazor-family-tree/) (CURRENTLY NOT WORKING!).
-
 # Installation
 Install from [Nuget](https://www.nuget.org/packages/Blazor.FamilyTreeJS).
 ```

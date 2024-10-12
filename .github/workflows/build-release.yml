@@ -56,60 +56,61 @@ jobs:
           NUGET_SOURCE: https://api.nuget.org/v3/index.json
           API_KEY: ${{ secrets.NUGET_API_KEY }}
 
-  deploy-to-github-page:
-    # This job is based off of https://swimburger.net/blog/dotnet/how-to-deploy-aspnet-blazor-webassembly-to-github-pages
-    name: Deploy sample app to Github page
-    runs-on: ubuntu-latest
-    needs: [build]
-    if: github.ref == 'refs/heads/master'
+  # deploy-to-github-page:
+  #   # This job is based off of https://swimburger.net/blog/dotnet/how-to-deploy-aspnet-blazor-webassembly-to-github-pages
+  #   name: Deploy sample app to Github page
+  #   runs-on: ubuntu-latest
+  #   needs: [build]
 
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
-    permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
+  #   if: github.ref == 'refs/heads/master'
 
-    env:
-      PUBLISH_FOLDER: publish-release
-      PROJECT_FILE: samples/Blazor.FamilyTreeJS.Sample/Blazor.FamilyTreeJS.Sample.csproj
-      ARTIFACT_NAME: github-pages
+  #   # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+  #   permissions:
+  #     pages: write      # to deploy to Pages
+  #     id-token: write   # to verify the deployment originates from an appropriate source
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 7.0.x
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-      # Build first so that it can generate all the JS files
-      - name: Build
-        run: dotnet build -c Release ${PROJECT_FILE}
-      - name: Publish sample app
-        run: dotnet publish ${PROJECT_FILE} -c Release -o ${PUBLISH_FOLDER} --nologo
-      # Changes the base-tag in index.html from '/' to 'blazor-family-tree' to match GitHub Pages repository subdirectory
-      - name: Change base-tag in index.html from / to blazor-family-tree
-        run: sed -i 's/<base href="\/" \/>/<base href="\/'"$REPO_NAME"'\/" \/>/g' ${PUBLISH_FOLDER}/wwwroot/index.html
-        env:
-          REPO_NAME: blazor-family-tree
-      # Add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project
-      # This allows files and folders starting with an underscore
-      - name: Add empty .nojekyll file
-        run: touch ${PUBLISH_FOLDER}/wwwroot/.nojekyll
-      # Copy index.html to 404.html to serve the same file when a file is not found
-      - name: Copy index.html to 404.html
-        run: cp ${PUBLISH_FOLDER}/wwwroot/index.html ${PUBLISH_FOLDER}/wwwroot/404.html
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ${{ env.PUBLISH_FOLDER }}/wwwroot/
-          name: ${ARTIFACT_NAME}
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          artifact_name: ${ARTIFACT_NAME}
+  #   env:
+  #     PUBLISH_FOLDER: publish-release
+  #     PROJECT_FILE: samples/Blazor.FamilyTreeJS.Sample/Blazor.FamilyTreeJS.Sample.csproj
+  #     ARTIFACT_NAME: github-pages
+
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Setup .NET SDK
+  #       uses: actions/setup-dotnet@v4
+  #       with:
+  #         dotnet-version: 7.0.x
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version-file: .node-version
+  #     # Build first so that it can generate all the JS files
+  #     - name: Build
+  #       run: dotnet build -c Release ${PROJECT_FILE}
+  #     - name: Publish sample app
+  #       run: dotnet publish ${PROJECT_FILE} -c Release -o ${PUBLISH_FOLDER} --nologo
+  #     # Changes the base-tag in index.html from '/' to 'blazor-family-tree' to match GitHub Pages repository subdirectory
+  #     - name: Change base-tag in index.html from / to blazor-family-tree
+  #       run: sed -i 's/<base href="\/" \/>/<base href="\/'"$REPO_NAME"'\/" \/>/g' ${PUBLISH_FOLDER}/wwwroot/index.html
+  #       env:
+  #         REPO_NAME: blazor-family-tree
+  #     # Add .nojekyll file to tell GitHub pages to not treat this as a Jekyll project
+  #     # This allows files and folders starting with an underscore
+  #     - name: Add empty .nojekyll file
+  #       run: touch ${PUBLISH_FOLDER}/wwwroot/.nojekyll
+  #     # Copy index.html to 404.html to serve the same file when a file is not found
+  #     - name: Copy index.html to 404.html
+  #       run: cp ${PUBLISH_FOLDER}/wwwroot/index.html ${PUBLISH_FOLDER}/wwwroot/404.html
+  #     - name: Setup Pages
+  #       uses: actions/configure-pages@v4
+  #     - name: Upload artifact
+  #       uses: actions/upload-pages-artifact@v3
+  #       with:
+  #         path: ${{ env.PUBLISH_FOLDER }}/wwwroot/
+  #         name: ${ARTIFACT_NAME}
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4
+  #       with:
+  #         artifact_name: ${ARTIFACT_NAME}
