@@ -2,6 +2,9 @@ name: CI/CD for Blazor.FamilyTreeJS
 
 on: [push, pull_request]
 
+env:
+  DOTNET_VERSION: 8.0.x
+
 jobs:
   build:
     name: Build & Test
@@ -12,7 +15,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -35,7 +38,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -80,7 +83,7 @@ jobs:
   #     - name: Setup .NET SDK
   #       uses: actions/setup-dotnet@v4
   #       with:
-  #         dotnet-version: 7.0.x
+  #         dotnet-version: ${{ env.DOTNET_VERSION }}
   #     - name: Setup Node.js
   #       uses: actions/setup-node@v4
   #       with:
