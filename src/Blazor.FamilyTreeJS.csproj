@@ -7,6 +7,7 @@
   <PropertyGroup>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageId>$(AssemblyName)</PackageId>
+    <PackageIcon>balkan_familytreejs_icon.png</PackageIcon>
     <Version>0.0.0</Version>
     <Authors>pandabytes</Authors>
     <Description>Wrapper Blazor library for FamilyTreeJS.</Description>
@@ -19,6 +20,7 @@
   <!-- Include files for packaging -->
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\balkan_familytreejs_icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <!-- Exclude files from packaging -->

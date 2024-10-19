@@ -1,7 +1,7 @@
 # Blazor.FamilyTreeJS
 
 This is a wrapper library for [FamilyTreeJS](https://balkan.app/FamilyTreeJS)
-and it is only compatible for Blazor WASM.
+and it is only compatible with Blazor WASM.
 
 Current FamilyTreeJS version packaged in this library: `1.9.44`.
 
