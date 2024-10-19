@@ -52,7 +52,7 @@ jobs:
       - name: Build project (Release)
         run: dotnet build -c Release
       - name: Pack library
-        run: dotnet pack -c Release --output . /p:Version=${VERSION}      
+        run: dotnet pack -c Release --output . /p:Version=${VERSION}
       - name: Push to nuget.org
         run: dotnet nuget push Blazor.FamilyTreeJS.${VERSION}.nupkg --source $NUGET_SOURCE --api-key $API_KEY
         env:
