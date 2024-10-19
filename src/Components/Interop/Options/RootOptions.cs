@@ -64,5 +64,6 @@ public sealed record FamilyTreeOptions<TNode>(
   EditForm? EditForm = null,
   bool? NodeTreeMenu = null,
   Toolbar? Toolbar = null,
-  IReadOnlyList<string>? Roots = null
+  IReadOnlyList<string>? Roots = null,
+  IEnumerable<Link>? Clinks = null
 ) where TNode : BaseNode;

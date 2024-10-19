@@ -124,6 +124,24 @@ public abstract partial class BaseFamilyTree<TNode> : BaseScopeComponent where T
     => await FamilyTreeJsInterop.RemoveNodeAsync(TreeIdForInterop, nodeId);
 
   /// <summary>
+  /// Add curved link.
+  /// </summary>
+  /// <param name="fromNodeId">From node.</param>
+  /// <param name="toNodeId">To node.</param>
+  /// <param name="label">Label on the curved link.</param>
+  /// <param name="template">Template of the curved link.</param>
+  public async Task AddClinkAsync(string fromNodeId, string toNodeId, string? label = null, string? template = null)
+    => await FamilyTreeJsInterop.AddClinkAsync(TreeIdForInterop, fromNodeId, toNodeId, label, template);
+
+  /// <summary>
+  /// Remove curved link.
+  /// </summary>
+  /// <param name="fromNodeId">From node.</param>
+  /// <param name="toNodeId">To node.</param>
+  public async Task RemoveClinkAsync(string fromNodeId, string toNodeId)
+    => await FamilyTreeJsInterop.RemoveClinkAsync(TreeIdForInterop, fromNodeId, toNodeId);
+
+  /// <summary>
   /// Reset the the family tree to a clean state, i.e. to its initial state.
   /// </summary>
   public async Task ResetAsync()
