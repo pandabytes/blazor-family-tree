@@ -92,8 +92,10 @@
         },
         Nodes: new List<CustomNode>
         { 
-          new() { Id = "123", Gender = Gender.Male, Name = "Jack Smith", Title = "Senior Consultant" }
+          new() { Id = "123", Gender = Gender.Male, Name = "Jack Smith", Title = "Senior Consultant" },
+          new() { Id = "456", Gender = Gender.Female, Name = "Jane Smith", Title = "Nurse" },
         },
+        Clinks: new List<Link> { new(From: "123", To: "456", Label: "Test clink", Template: "blue") },
         NodeMenu: new() {
           Details = new(Text: "Show details"),
           Edit = new(Text: "Edit details"),

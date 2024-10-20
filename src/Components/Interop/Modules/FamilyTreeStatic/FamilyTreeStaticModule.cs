@@ -57,4 +57,11 @@ public sealed class FamilyTreeStaticModule : BaseJsModule
 
     return await Module.InvokeAsync<string>($"{FamilyTreeObject}.icon.{icon}", width, height, color, x, y);
   }
+
+  /// <summary>
+  /// Set the global clink curve size.
+  /// </summary>
+  /// <param name="curveSize">Size of the curve. 0 for straight link.</param>
+  public async Task SetFamilyClinkCurveAsync(float curveSize)
+    => await Module.InvokeVoidAsync("setFamilyClinkCurve", curveSize);
 }
