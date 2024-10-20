@@ -4,7 +4,6 @@
 // loads the app
 // Idea taken from here https://stackoverflow.com/questions/74723484/how-to-get-vite-to-not-import-bundle-an-external-dependency/74723564
 import type { DotNet as NpmDotNet } from '@microsoft/dotnet-js-interop';
-
 import { InvalidArgumentError } from './errors';
 import FamilyTree from '@balkangraph/familytree.js';
 
@@ -84,6 +83,20 @@ class FamilyTreeJsInterop {
       familyTree.removeNode(nodeId, undefined, true);
     }
     return canRemove;
+  }
+
+  public addClink(treeId: string, from: string, to: string, label?: string, template?: string) {
+    const familyTree = this.getFamilyTree(treeId);
+    familyTree
+      .addClink(from, to, label, template)
+      .draw();
+  }
+
+  public removeClink(treeId: string, from: string, to: string) {
+    const familyTree = this.getFamilyTree(treeId);
+    familyTree
+      .removeClink(from, to)
+      .draw();
   }
 
   public replaceNodeIds(treeId: string, oldNewIdMappings: { [key: string]: string | number }) {

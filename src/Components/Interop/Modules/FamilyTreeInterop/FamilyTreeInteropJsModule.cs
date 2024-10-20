@@ -65,6 +65,12 @@ internal sealed class FamilyTreeInteropJsModule<TNode> : BaseJsModule where TNod
   public async Task<bool> RemoveNodeAsync(string treeId, string nodeId)
     => await Module.InvokeAsync<bool>($"{FamilyTreeJsInteropModule}.removeNode", treeId, nodeId);
 
+  public async Task AddClinkAsync(string treeId, string from, string to, string? label = null, string? template = null)
+    => await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.addClink", treeId, from, to, label, template);
+
+  public async Task RemoveClinkAsync(string treeId, string from, string to)
+    => await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.removeClink", treeId, from, to);
+
   public async Task ReplaceNodeIdsAsync(string treeId, IDictionary<string, string> oldNewIdMappings)
     => await Module.InvokeVoidAsync($"{FamilyTreeJsInteropModule}.replaceNodeIds", treeId, oldNewIdMappings);
 

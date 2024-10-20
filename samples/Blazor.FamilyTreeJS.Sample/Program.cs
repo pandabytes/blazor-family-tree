@@ -24,6 +24,7 @@ var webHost = builder
 
 var familyTreeStaticModule = webHost.Services.GetRequiredService<FamilyTreeStaticModule>();
 await familyTreeStaticModule.ImportAsync();
+await familyTreeStaticModule.SetFamilyClinkCurveAsync(3.5f);
 
 await webHost.RegisterCallbackReviverAsync();
 await webHost.RunAsync();
